@@ -11,7 +11,7 @@ public class UserDTO {
     private String passwordCorrente;
     private String nuovaPassword;
     private Set<RoleDTO> roles;
-	private boolean active = true;
+	private Boolean active;
     
     public UserDTO() {
     	
@@ -66,11 +66,11 @@ public class UserDTO {
 		this.roles = roles;
 	}
 
-	public boolean getActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
     

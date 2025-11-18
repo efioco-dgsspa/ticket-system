@@ -9,9 +9,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import com.efioco.ticketsystem.dto.RoleDTO;
 import com.efioco.ticketsystem.dto.UserDTO;
@@ -24,6 +28,7 @@ import com.efioco.ticketsystem.repository.UserRepository;
 import com.efioco.ticketsystem.request.AuthRequest;
 import com.efioco.ticketsystem.request.UserRequest;
 import com.efioco.ticketsystem.response.UserResponse;
+import com.efioco.ticketsystem.specification.UserSpecification;
 
 import io.micrometer.common.util.StringUtils;
 
@@ -213,36 +218,6 @@ public class UserService implements UserServiceInterface {
 		return response;
 	}
 	
-//	@Override
-//	public UserResponse toggleUserActive(UserDTO user) throws UserServiceException {
-//		logger.info("### Inizio processo di attivazione/disattivazione di un utente ###");
-//	    UserEntity existingUser;
-//
-//	    if (StringUtils.isNotBlank(user.getUsername())) {
-//	        existingUser = userRepository.findByUsername(user.getUsername())
-//	            .orElseThrow(() -> new UserServiceException("Utente non trovato con username: " + user.getUsername()));
-//	    } else {
-//	        existingUser = userRepository.findByEmail(user.getEmail())
-//	            .orElseThrow(() -> new UserServiceException("Utente non trovato con email: " + user.getEmail()));
-//	    }
-//
-//	    boolean newActiveStatus = !existingUser.getActive();
-//	    existingUser.setActive(newActiveStatus);
-//
-//	    userRepository.save(existingUser);
-//
-//	    String subject = "Aggiornamento stato account";
-//	    String text = "Ciao " + existingUser.getUsername() + ", il tuo account è stato " +
-//	                  (newActiveStatus ? "attivato" : "disattivato") + ".";
-//	    mailService.sendSimple(existingUser.getEmail(), subject, text);
-//
-//	    UserResponse response = new UserResponse();
-//	    response.setUser(UserMapper.toDTO(existingUser));
-//	    
-//	    logger.info("### Procedura di attivazione/disattivazione di un utente completata con successo ###");
-//	    return response;
-//	}
-	
 	@Override
 	public UserResponse updateUserActiveStatus(String id, boolean active) throws UserServiceException {
 	    logger.info("### Inizio aggiornamento stato attivo utente con id: {} ###", id);
@@ -272,6 +247,33 @@ public class UserService implements UserServiceInterface {
 	    logger.info("### Stato attivo aggiornato con successo per utente {} ###", id);
 	    return response;
 	}
+	
+	@Override
+    public UserResponse getUsersFiltered(UserRequest request) throws UserServiceException {
+		UserResponse response = new UserResponse();
+        try {
+            Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+            Page<UserEntity> page = userRepository.findAll(new UserSpecification(request), pageable);
+            List<UserEntity> entities = page.getContent();
+
+            if (CollectionUtils.isEmpty(entities)) {
+                response.setTotalPage(0);
+                response.setTotalRows(0l);
+                response.setUsers(null);
+
+                return response;
+            }
+
+            response.setTotalPage(page.getTotalPages());
+            response.setTotalRows(page.getTotalElements());
+
+            response.setUsers(userMapper.toDTOList(entities));
+        } catch (Exception e) {
+            throw new UserServiceException("Errore durante il recupero degli utenti.");
+        }
+        return response;
+    }
 	
 	@Override
 	public UserResponse getUserByUsername(String username) throws UserServiceException {

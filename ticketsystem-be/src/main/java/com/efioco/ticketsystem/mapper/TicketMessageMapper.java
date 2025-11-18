@@ -21,6 +21,8 @@ public class TicketMessageMapper {
 	@Autowired
 	@Lazy
 	private TicketMapper ticketMapper;
+	@Autowired
+	private UserMapper userMapper;
 
 	public TicketMessageDTO toDTO(TicketMessageEntity entity) {
 		if (entity == null) return null;
@@ -28,6 +30,7 @@ public class TicketMessageMapper {
 		TicketMessageDTO dto = new TicketMessageDTO();
 		dto.setId(entity.getId().toString());
 		dto.setTicket(ticketMapper.toDTO(entity.getTicket()));
+		dto.setAuthor(userMapper.toDTO(entity.getAuthor()));
 		dto.setDescription(entity.getDescription());
 		dto.setAttachments(ticketAttachmentMapper.toDTOList(entity.getAttachments()));
 		dto.setCreatedAt(entity.getCreatedAt());
@@ -42,6 +45,7 @@ public class TicketMessageMapper {
 		TicketMessageEntity entity = new TicketMessageEntity();
 		entity.setId(StringUtils.isNotBlank(dto.getId()) ? UUID.fromString(dto.getId()) : null);
 		entity.setTicket(ticketMapper.toEntity(dto.getTicket()));
+		entity.setAuthor(userMapper.toEntity(dto.getAuthor()));
 		entity.setDescription(dto.getDescription());
 		entity.setAttachments(ticketAttachmentMapper.toEntityList(dto.getAttachments()));
 		entity.setCreatedAt(dto.getCreatedAt());

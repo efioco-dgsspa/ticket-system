@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.efioco.ticketsystem.dto.UserDTO;
 
-public class UserResponse {
+public class UserResponse extends PaginationResponse {
 
 	private UserDTO user;
 	private List<UserDTO> users;

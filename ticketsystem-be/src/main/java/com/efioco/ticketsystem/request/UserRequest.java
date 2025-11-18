@@ -2,7 +2,7 @@ package com.efioco.ticketsystem.request;
 
 import com.efioco.ticketsystem.dto.UserDTO;
 
-public class UserRequest {
+public class UserRequest extends PaginationRequest {
 
 	private UserDTO user;
 

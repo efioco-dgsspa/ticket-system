@@ -7,6 +7,7 @@ public class TicketMessageDTO {
 
 	private String id;
     private TicketDTO ticket;
+    private UserDTO author;
     private String description;
     private List<TicketAttachmentDTO> attachments;
     private LocalDateTime createdAt;
@@ -30,6 +31,14 @@ public class TicketMessageDTO {
 
 	public void setTicket(TicketDTO ticket) {
 		this.ticket = ticket;
+	}
+
+	public UserDTO getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(UserDTO author) {
+		this.author = author;
 	}
 
 	public String getDescription() {

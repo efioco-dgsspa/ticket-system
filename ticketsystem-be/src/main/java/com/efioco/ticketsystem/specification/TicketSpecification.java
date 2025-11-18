@@ -3,16 +3,18 @@ package com.efioco.ticketsystem.specification;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.CollectionUtils;
 
 import com.efioco.ticketsystem.dto.TicketDTO;
 import com.efioco.ticketsystem.entity.TicketEntity;
+import com.efioco.ticketsystem.entity.TicketMessageEntity;
 import com.efioco.ticketsystem.request.TicketRequest;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -35,7 +37,7 @@ public class TicketSpecification implements Specification<TicketEntity> {
 
 		// customerId
 		if (StringUtils.isNotBlank(filter.getCustomerId())) {
-			predicati.add(cb.equal(root.get("description"), filter.getCustomerId()));
+			predicati.add(cb.equal(root.get("customerId"), filter.getCustomerId()));
 		}
 
 		// title like
@@ -55,12 +57,12 @@ public class TicketSpecification implements Specification<TicketEntity> {
 
 		// creator
 		if (filter.getCreator() != null) {
-			predicati.add(cb.equal(root.get("creator").get("id"), filter.getCreator()));
+			predicati.add(cb.equal(root.get("creator").get("username"), filter.getCreator().getUsername()));
 		}
 
 		// assignedTo
 		if (filter.getAssignedTo() != null) {
-			predicati.add(cb.equal(root.get("assignedTo").get("id"), filter.getAssignedTo()));
+			predicati.add(cb.equal(root.get("assignedTo").get("username"), filter.getAssignedTo().getUsername()));
 		}
 
 		// date range
@@ -70,9 +72,19 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		if (filter.getUpdatedAt() != null) {
 			predicati.add(cb.lessThanOrEqualTo(root.get("createdAt"), filter.getUpdatedAt()));
 		}
+		
+		// Filtra ticket con messaggi di un certo utente, in base allo username
+		if (!CollectionUtils.isEmpty(filter.getMessages())) {
+			Join<TicketEntity, TicketMessageEntity> messagesJoin = root.join("messages");
+		    predicati.add(cb.like(
+		        cb.lower(messagesJoin.get("author").get("username")), 
+		        "%" + filter.getMessages().get(0).getAuthor().getUsername().toLowerCase() + "%"
+		    ));
+		    query.distinct(true);
+		}
 
 		// removed flag
-		if (BooleanUtils.isTrue(filter.getRemoved())) {
+		if (filter.getRemoved() != null) {
 			predicati.add(cb.isFalse(root.get("removed")));
 		}
 
@@ -84,7 +96,7 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		if (StringUtils.isBlank(filter.getCustomerId()) && StringUtils.isBlank(filter.getTitle())
 				&& filter.getStatus() == null && filter.getCategory() == null && filter.getCreator() == null 
 				&& filter.getAssignedTo() == null && filter.getCreatedAt() == null && filter.getUpdatedAt() == null
-				&& filter.getRemoved() == null) {
+				&& CollectionUtils.isEmpty(filter.getMessages()) && filter.getRemoved() == null) {
 			
 			return true;
 		}
