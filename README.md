@@ -151,7 +151,7 @@ Integrazione con servizi esterni (email, storage cloud per allegati)
 
 ## 👨‍💻 Autore
 
-Progetto sviluppato da Emanuele Fiooc come evoluzione del corso di approfondimento su Spring Security e Architetture Full Stack.
+Progetto sviluppato da Emanuele Fioco come evoluzione del corso di approfondimento su Spring Security e Architetture Full Stack.
 
 ## 📜 Licenza
 
