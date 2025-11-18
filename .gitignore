@@ -1,0 +1,22 @@
+# Backend
+ticketsystem-be/target/
+ticketsystem-be/.mvn/
+ticketsystem-be/mvnw
+ticketsystem-be/mvnw.cmd
+
+# Frontend
+ticketsystem-fe/node_modules/
+ticketsystem-fe/dist/
+
+# Docker
+*.env
+
+# IDE
+.idea/
+.metadata/
+.vscode/
+*.iml
+
+# System
+.DS_Store
+Thumbs.db

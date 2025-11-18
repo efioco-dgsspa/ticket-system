@@ -1,0 +1,318 @@
+package com.efioco.ticketsystem.controller;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.efioco.ticketsystem.exceptions.UserServiceException;
+import com.efioco.ticketsystem.request.UserRequest;
+import com.efioco.ticketsystem.response.ErrorResponse;
+import com.efioco.ticketsystem.response.UserResponse;
+import com.efioco.ticketsystem.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+@Tag(name = "User Controller", description = "Gestione CRUD degli users")
+public class UserController {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+	@Autowired
+	private UserService userService;
+
+	@PostMapping
+	@Operation(
+			summary = "Crea un nuovo user", 
+			description = "Crea uno user a partire dai dati forniti nel body JSON e restituisce un JSON contenente l user appena creato.")
+	@ApiResponses({
+	    @ApiResponse(responseCode = "201", description = "Utente creato correttamente"),
+	    @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+	    @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+	    @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+	    @ApiResponse(responseCode = "500", description = "Errore interno del server")
+	})
+	public ResponseEntity<?> createUser(@RequestBody UserRequest request) {
+		try {
+            var createdUser = userService.createUser(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Richiesta non valida: {}", e);
+            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        } catch (Exception e) {
+            logger.error("Errore interno durante la creazione dell'utente", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+	}
+	
+    @GetMapping
+    @Operation(
+    	    summary = "Mostra tutti gli utenti a sistema",
+    	    description = "Recupera e restituisce la lista completa di tutti gli utenti presenti nel sistema."
+    	)
+    @ApiResponses({
+    	@ApiResponse(responseCode = "200", description = "Lista utenti restituita correttamente"),
+    	@ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+    	@ApiResponse(responseCode = "404", description = "Nessun utente trovato"),
+    	@ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> getAllUsers() {
+    	try {
+            UserResponse response = userService.getAllUsers();
+            if (CollectionUtils.isEmpty(response.getUsers())) {
+                return buildError(HttpStatus.NOT_FOUND, "Nessun utente trovato");
+            }
+            return ResponseEntity.ok(response.getUsers());
+
+        } catch (Exception e) {
+            logger.error("Errore interno durante il recupero utenti", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+    
+    @GetMapping("/by-username/{username}")
+    @Operation(
+        summary = "Recupera un singolo utente per username",
+        description = "Restituisce i dettagli completi di uno user a partire dal suo username, fornito come parametro nel path."
+    )
+    @Parameter(
+    	name = "username",
+        description = "Lo username dello user da cercare",
+        example = "mario.rossi",
+        required = true
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente trovato e restituito correttamente"),
+        @ApiResponse(responseCode = "400", description = "Richiesta non valida o formato errato"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        try {
+            if (StringUtils.isBlank(username)) {
+                return buildError(HttpStatus.BAD_REQUEST, "Username non fornito nella richiesta");
+            }
+
+            UserResponse response = userService.getUserByUsername(username);
+            if (response.getUser() == null) {
+                return buildError(HttpStatus.NOT_FOUND, "Utente non trovato");
+            }
+
+            return ResponseEntity.ok(response.getUser());
+        } catch (Exception e) {
+            logger.error("Errore interno durante la ricerca utente per username", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+
+    @GetMapping("/by-email/{email}")
+    @Operation(
+        summary = "Recupera un singolo utente per email",
+        description = "Restituisce i dettagli completi di uno user a partire dalla sua email, fornita come parametro nel path."
+    )
+    @Parameter(
+    	name = "email",
+    	description = "L'indirizzo email dello user da cercare",
+    	example = "mario.rossi@example.com",
+    	required = true
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente trovato e restituito correttamente"),
+        @ApiResponse(responseCode = "400", description = "Richiesta non valida o formato errato"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        try {
+            if (StringUtils.isBlank(email)) {
+                return buildError(HttpStatus.BAD_REQUEST, "Email non fornita nella richiesta");
+            }
+
+            UserResponse response = userService.getUserByEmail(email);
+            if (response.getUser() == null) {
+                return buildError(HttpStatus.NOT_FOUND, "Utente non trovato");
+            }
+
+            return ResponseEntity.ok(response.getUser());
+        } catch (Exception e) {
+            logger.error("Errore interno durante la ricerca utente per email", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+    
+    @PutMapping("/update-user")
+    @Operation(
+        summary = "Modifica un utente esistente",
+        description = "Aggiorna i dati di uno user (username, email, password, ruoli o stato) e invia una mail di notifica se la modifica è avvenuta con successo."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente aggiornato con successo"),
+        @ApiResponse(responseCode = "400", description = "Dati non validi o mancanti"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> updateUser(@RequestBody UserRequest request) {
+    	try {
+            var updatedUser = userService.updateUser(request);
+            return ResponseEntity.ok(updatedUser);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Dati non validi: {}", e);
+            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        } catch (Exception e) {
+            logger.error("Errore interno durante l'aggiornamento utente", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+    
+    @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Elimina un utente solo se disattivo",
+        description = "Rimuove un utente dal sistema, ma solo se il suo stato è impostato su disattivo (active = false)."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente eliminato con successo"),
+        @ApiResponse(responseCode = "400", description = "Utente non disattivo, impossibile eliminare"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+    	try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("Utente eliminato con successo");
+
+        } catch (IllegalStateException e) {
+            logger.warn("Utente non disattivo: {}", e);
+            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        } catch (Exception e) {
+            logger.error("Errore interno durante la cancellazione utente", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+    
+//    @PostMapping("/toggle-active")
+//    @Operation(
+//        summary = "Attiva o disattiva un utente",
+//        description = "Modifica lo stato attivo di un utente usando username o email e invia una mail informativa all'utente."
+//    )
+//    @ApiResponses({
+//        @ApiResponse(responseCode = "200", description = "Stato dell'utente aggiornato correttamente"),
+//        @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+//        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+//        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+//        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+//        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+//    })
+//    public ResponseEntity<?> toggleUserActive(@RequestBody UserRequest request) {
+//        try {
+//            if (request == null || request.getUser() == null ||
+//                (StringUtils.isBlank(request.getUser().getUsername()) && StringUtils.isBlank(request.getUser().getEmail()))) {
+//                return buildError(HttpStatus.BAD_REQUEST, "Devono essere forniti username o email dell'utente");
+//            }
+//
+//            UserResponse response = userService.toggleUserActive(request.getUser());
+//            return ResponseEntity.ok(response.getUser());
+//
+//        } catch (UserServiceException e) {
+//            logger.warn("Errore nell'attivazione/disattivazione utente: {}", e.getMessage());
+//            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+//
+//        } catch (Exception e) {
+//            logger.error("Errore interno durante toggle attivo utente", e);
+//            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+//        }
+//    }
+    
+    @PatchMapping("/{id}/activate")
+    @Operation(
+        summary = "Attiva un utente",
+        description = "Imposta lo stato attivo di un utente su true, identificato dal suo ID, e invia una mail di notifica."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente attivato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Richiesta non valida o utente già attivo"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> activateUser(@PathVariable String id) {
+        try {
+            UserResponse response = userService.updateUserActiveStatus(id, true);
+            return ResponseEntity.ok(response.getUser());
+        } catch (UserServiceException e) {
+            logger.warn("Errore durante l'attivazione utente: {}", e.getMessage());
+            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Errore interno durante l'attivazione utente", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    @Operation(
+        summary = "Disattiva un utente",
+        description = "Imposta lo stato attivo di un utente su false, identificato dal suo ID, e invia una mail di notifica."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Utente disattivato correttamente"),
+        @ApiResponse(responseCode = "400", description = "Richiesta non valida o utente già disattivo"),
+        @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+        @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+        @ApiResponse(responseCode = "404", description = "Utente non trovato"),
+        @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> deactivateUser(@PathVariable String id) {
+        try {
+            UserResponse response = userService.updateUserActiveStatus(id, false);
+            return ResponseEntity.ok(response.getUser());
+        } catch (UserServiceException e) {
+            logger.warn("Errore durante la disattivazione utente: {}", e.getMessage());
+            return buildError(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Errore interno durante la disattivazione utente", e);
+            return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
+        }
+    }
+    
+    private ResponseEntity<ErrorResponse> buildError(HttpStatus status, String message) {
+        ErrorResponse error = new ErrorResponse();
+        error.setCode(String.valueOf(status.value()));
+        error.setCustomerMessage(message);
+        return ResponseEntity.status(status).body(error);
+    }
+
+}
