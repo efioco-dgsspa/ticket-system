@@ -1,0 +1,28 @@
+<header class="header">
+  <div class="logo-area">
+    <img src="assets/logo-dgs.png" alt="DGS Logo" class="logo-img" />
+    <span class="company-name">DGS</span>
+  </div>
+
+  <!-- 👇 Breadcrumbs centrate -->
+  <div class="breadcrumb-area">
+    <app-breadcrumb></app-breadcrumb>
+  </div>
+
+  <div class="user-area">
+    <ng-container *ngIf="user; else notLogged">
+      <span class="username">{{ user.username }}</span>
+      <img
+        src="assets/user-icon.png"
+        alt="Icona profilo"
+        class="profile-icon"
+        (click)="logout()"
+        title="Logout"
+      />
+    </ng-container>
+    <ng-template #notLogged>
+      <a [routerLink]="'/login'" class="login-link">Login</a>
+      <img src="assets/user-icon.png" alt="Icona profilo" class="profile-icon" />
+    </ng-template>
+  </div>
+</header>

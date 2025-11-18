@@ -1,0 +1,9 @@
+<nav class="sidebar">
+  <ul class="menu-list">
+    <li *ngFor="let item of filteredMenuItems">
+      <a [routerLink]="item.route" routerLinkActive="active-link">
+        {{ item.label }}
+      </a>
+    </li>
+  </ul>
+</nav>

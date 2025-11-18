@@ -1,0 +1,60 @@
+<div class="user-detail-container" *ngIf="!loading; else loadingTpl">
+  <h2 *ngIf="mode==='view'">Dettaglio Utente</h2>
+  <h2 *ngIf="mode==='edit'">Modifica Utente</h2>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username" placeholder="Inserisci username">
+      <div class="error" *ngIf="f.username.touched && f.username.invalid">Username obbligatorio</div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="Inserisci email">
+      <div class="error" *ngIf="f.email.touched && f.email.invalid">Email non valida</div>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Ruolo</label>
+      <select id="role" formControlName="role">
+        <option [ngValue]="null" disabled>-- Seleziona ruolo --</option>
+        <option *ngFor="let r of roles" [ngValue]="r.id">{{ r.name }}</option>
+      </select>
+      <div class="error" *ngIf="f.role.touched && f.role.invalid">Ruolo obbligatorio</div>
+    </div>
+
+    <div *ngIf="mode === 'edit'">
+      <div class="form-group">
+        <label for="passwordCorrente">Password Corrente</label>
+        <input id="passwordCorrente" type="password" formControlName="passwordCorrente" placeholder="Inserisci password corrente">
+      </div>
+
+      <div class="form-group">
+        <label for="nuovaPassword">Nuova Password</label>
+        <input id="nuovaPassword" type="password" formControlName="nuovaPassword" placeholder="Inserisci nuova password">
+      </div>
+
+      <div class="error" *ngIf="userForm.errors?.['passwordMismatch']">
+        Se desideri modificare la password, compila entrambi i campi.
+      </div>
+    </div>
+
+    <!-- ✅ Checkbox con etichetta dinamica -->
+    <div class="form-group checkbox-wrapper">
+      <label for="active"> 
+        {{ userForm.get('active')?.value ? 'Utenza attiva' : 'Utenza disattivata' }}
+      </label>
+      <input id="active" type="checkbox" formControlName="active">
+    </div>
+
+    <!-- ✅ Bottone sulla sua riga -->
+    <div class="form-actions">
+      <button type="submit" *ngIf="mode==='edit'" [disabled]="userForm.invalid">Salva modifiche</button>
+    </div>
+  </form>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Caricamento...</div>
+</ng-template>

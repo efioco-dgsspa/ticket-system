@@ -1,0 +1,41 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2b2d42;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  position: relative;
+
+  .logo-area,
+  .user-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb-area {
+    flex: 2;
+    text-align: center;
+  }
+
+  .user-area {
+    justify-content: flex-end;
+    .username {
+      margin-right: 0.5rem;
+      font-weight: 500;
+    }
+    .profile-icon {
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .login-link {
+      margin-right: 0.5rem;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  }
+}

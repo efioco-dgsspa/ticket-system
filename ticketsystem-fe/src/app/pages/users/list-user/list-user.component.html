@@ -1,0 +1,38 @@
+<table class="table table-striped" *ngIf="!loading; else loadingTpl">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Ruolo</th>
+      <th>Attivo</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let u of users">
+      <td>{{ u.username }}</td>
+      <td>{{ u.email }}</td>
+      <td class="center">{{ getRoleNames(u) }}</td>
+      <td class="center">
+        <span [class.active]="u.active" [class.inactive]="!u.active">
+          {{ u.active ? 'Sì' : 'No' }}
+        </span>
+      </td>
+      <td class="actions-cell center">
+        <button class="menu-btn" (click)="toggleMenu(u, $event)">☰</button>
+        <div class="dropdown" *ngIf="u.showMenu" (click)="$event.stopPropagation()">
+          <button *ngIf="can('VIEW')" (click)="viewUser(u)">👁️ Visualizza</button>
+          <button *ngIf="can('EDIT')" (click)="editUser(u)">✏️ Modifica</button>
+          <button *ngIf="can('TOGGLE')" (click)="toggleActivation(u)">
+            {{ u.active ? '🔒 Disattiva' : '🔓 Attiva' }}
+          </button>
+          <button *ngIf="can('DELETE')" (click)="deleteUser(u)">🗑️ Elimina</button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #loadingTpl>
+  <div class="loading">Caricamento utenti...</div>
+</ng-template>

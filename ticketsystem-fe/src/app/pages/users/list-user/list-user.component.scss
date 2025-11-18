@@ -1,0 +1,119 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.action-menu {
+  position: relative;
+}
+
+.center {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.menu-options {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  margin: 4px 0 0 0;
+  padding: 0;
+  z-index: 10;
+}
+
+.menu-options li {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menu-options li:hover {
+  background-color: #f0f0f0;
+}
+
+.active {
+  color: green;
+}
+.inactive {
+  color: red;
+}
+
+.actions-cell {
+  position: relative;
+}
+
+/* Bottone azioni aggiornato */
+.menu-btn {
+  background: #007bff; // blu coerente con .pulse-spinner
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover {
+    background: #0056b3; // blu più scuro al passaggio del mouse
+    transform: scale(1.05);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: 0; /* punto di riferimento: stesso livello del bottone */
+  right: 100%; /* spostamento verso sinistra */
+  transform: translateX(40px) translateY(5px); 
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  padding: 4px 0;
+  min-width: 150px;
+  animation: dropdownAppear 0.25s ease-out;
+
+  button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+  }
+}
+
+/* ✨ Piccola animazione */
+@keyframes dropdownAppear {
+  from {
+    opacity: 0;
+    transform: translateX(10px) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-2px) translateY(0px);
+  }
+}
