@@ -50,6 +50,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -62,6 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             email = jwtUtil.getEmailFromToken(jwt);
         }
+        
+//        System.out.println("🔹 Path: " + path + ", Method: " + request.getMethod());
+//        System.out.println("🔹 Authorization header: " + authHeader);
+//        if (jwt != null) System.out.println("🔹 JWT: " + jwt);
+//        if (email != null) System.out.println("🔹 Email dal JWT: " + email);
+//        System.out.println("🔹 SecurityContext Authentication: " + SecurityContextHolder.getContext().getAuthentication());
 
         if (StringUtils.isNotBlank(email) && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
@@ -75,6 +87,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			} catch (UserServiceException e) {
 				 e.printStackTrace();
 			}
+			
+			// 🔹 LOG aggiuntivi per debug
+//			System.out.println("🔹 userDetails: " + userDetails);
+//			System.out.println("🔹 JWT valido? " + jwtUtil.validateToken(jwt));
 
             if (jwtUtil.validateToken(jwt)) {
                 UsernamePasswordAuthenticationToken authToken =

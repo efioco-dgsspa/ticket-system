@@ -29,6 +29,11 @@ export class UserService {
     return this.http.get<User[]>(ApiEndpoints.USERS.GET_ALL);
   }
 
+  // 🔍 Recupera gli utenti sulla base dei filtri
+  searchUsers(request: any) {
+    return this.http.post<User[]>(ApiEndpoints.USERS.SEARCH, request);
+  }
+
   // 🔍 Cerca per username
   getUserByUsername(username: string): Observable<User> {
     return this.http.get<User>(ApiEndpoints.USERS.BY_USERNAME(username));

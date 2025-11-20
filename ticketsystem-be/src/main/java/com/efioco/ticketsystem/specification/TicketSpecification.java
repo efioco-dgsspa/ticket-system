@@ -31,7 +31,7 @@ public class TicketSpecification implements Specification<TicketEntity> {
 	public Predicate toPredicate(Root<TicketEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		List<Predicate> predicati = new ArrayList<>();
 		
-		if (!isFilterPresent(filter)) {
+		if (isFilterEmpty(filter)) {
 	        return cb.isTrue(cb.literal(true));
 	    }
 
@@ -91,7 +91,7 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		return cb.and(predicati.toArray(new Predicate[0]));
 	}
 
-	private boolean isFilterPresent(TicketDTO filter) {
+	private boolean isFilterEmpty(TicketDTO filter) {
 		
 		if (StringUtils.isBlank(filter.getCustomerId()) && StringUtils.isBlank(filter.getTitle())
 				&& filter.getStatus() == null && filter.getCategory() == null && filter.getCreator() == null 

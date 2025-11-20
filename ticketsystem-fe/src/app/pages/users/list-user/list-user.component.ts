@@ -9,11 +9,13 @@ import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { RoleService } from '../../../services/role/role.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-list-user',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './list-user.component.html',
   styleUrls: ['./list-user.component.scss']
 })
@@ -24,9 +26,20 @@ export class ListUserComponent implements OnInit, OnDestroy {
   userRoles: string[] = [];
   private clickListener?: () => void;
   private sub = new Subscription();
+  roles: any[] = [];
+  loadingRoles = false;
+
+
+  search = {
+    username: '',
+    email: '',
+    active: null as boolean | null,
+    roles: [] as string[]
+  };
 
   constructor(
     private userService: UserService,
+    private roleService: RoleService,
     private authService: AuthService,
     private notificationService: NotificationService,
     private renderer: Renderer2,
@@ -35,6 +48,8 @@ export class ListUserComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadRoles();
+
     this.userRoles = this.authService.getUserRoles() || [];
 
     this.clickListener = this.renderer.listen('document', 'click', () => {
@@ -47,11 +62,43 @@ export class ListUserComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  applySearch(): void {
+    const request = {
+      page: 0,
+      size: 20,
+      user: {
+        username: this.search.username || null,
+        email: this.search.email || null,
+        active: this.search.active,
+        roles: this.search.roles[0] 
+          ? [{id: this.search.roles[0]}] 
+          : null
+      }
+    };
+
+    this.loading = true;
+    this.userService.searchUsers(request).subscribe({
+      next: (list) => {
+        this.users = this.formatUserRoles(list);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.notificationService.error('Errore durante la ricerca filtrata degli utenti.');
+      }
+    });
+  }
+
+  resetSearch(): void {
+    this.search = { username: '', email: '', active: null, roles: [] };
+    this.loadUsers();
+  }
+
   loadUsers(): void {
     this.loading = true;
     this.userService.getAllUsers().subscribe({
       next: (list) => {
-        this.users = list.map(u => ({ ...u, showMenu: false }));
+        this.users = this.formatUserRoles(list);
         this.loading = false;
       },
       error: (error: HttpErrorResponse) => {
@@ -64,6 +111,35 @@ export class ListUserComponent implements OnInit, OnDestroy {
         this.notificationService.error(this.error);
       }
     });
+  }
+
+  private loadRoles(): void {
+    this.loadingRoles = true;
+    this.roleService.getAllRoles().subscribe({
+      next: (list) => {
+        // Sostituisco eventuali "_" con spazi nei nomi dei ruoli
+        this.roles = list.map(r => ({
+          ...r,
+          name: r.name ? r.name.replace(/_/g, ' ') : ''
+        }));
+        this.loadingRoles = false;
+      },
+      error: (err) => {
+        this.loadingRoles = false;
+        console.error('Errore caricamento ruoli:', err);
+      }
+    });
+  }
+
+  private formatUserRoles(users: UserWithMenu[]): UserWithMenu[] {
+    return users.map(u => ({
+      ...u,
+      roles: u.roles?.map(r => ({
+        ...r,
+        name: r.name ? r.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : ''
+      })) || [],
+      showMenu: u.showMenu ?? false
+    }));
   }
 
   toggleMenu(user: UserWithMenu, event: MouseEvent): void {

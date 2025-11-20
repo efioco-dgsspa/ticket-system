@@ -19,6 +19,6 @@ public interface UserServiceInterface {
 	void deleteUser(String id) throws UserServiceException;
 	UserResponse getUserByEmailOrUsername(AuthRequest request) throws UserServiceException;
 	UserResponse updateUserActiveStatus(String id, boolean active) throws UserServiceException;
-	UserResponse getUsersFiltered(UserRequest request) throws UserServiceException;
+	UserResponse searchUsers(UserRequest request) throws UserServiceException;
 	
 }

@@ -1,36 +1,62 @@
 import { environment } from "../../environments/environment";
 
 export class ApiEndpoints {
-  private static readonly BASE_URL = environment.apiBaseUrl;
+  // Base URL principale
+  private static get BASE_URL(): string {
+    return environment.apiBaseUrl;
+  }
+
+  // Sotto-path già incapsulati
+  private static get AUTH_BASE_URL(): string {
+    return `${this.BASE_URL}/auth`;
+  }
+
+  private static get USER_BASE_URL(): string {
+    return `${this.BASE_URL}/users`;
+  }
+
+  private static get ROLE_BASE_URL(): string {
+    return `${this.BASE_URL}/roles`;
+  }
+
+  private static get CATEGORY_BASE_URL(): string {
+    return `${this.BASE_URL}/categories`;
+  }
 
   // 🔐 AUTH ENDPOINTS
   static readonly AUTH = {
-    LOGIN: `${this.BASE_URL}/auth/login`,
-    REFRESH: `${this.BASE_URL}/auth/refresh`,
+    LOGIN: `${ApiEndpoints.AUTH_BASE_URL}/login`,
+    REFRESH: `${ApiEndpoints.AUTH_BASE_URL}/refresh`,
   };
 
   // 👤 USER ENDPOINTS
   static readonly USERS = {
-    BASE: `${this.BASE_URL}/users`,
-    CREATE: `${this.BASE_URL}/users`,
-    GET_ALL: `${this.BASE_URL}/users`,
-    BY_USERNAME: (username: string) => `${this.BASE_URL}/users/by-username/${username}`,
-    BY_EMAIL: (email: string) => `${this.BASE_URL}/users/by-email/${email}`,
-    UPDATE: `${this.BASE_URL}/users/update-user`,
-    ACTIVATE: (id: string) => `${this.BASE_URL}/users/${id}/activate`,
-    DEACTIVATE: (id: string) => `${this.BASE_URL}/users/${id}/deactivate`,
-    DELETE: (id: string) => `${this.BASE_URL}/users/${id}`,
+    BASE: ApiEndpoints.USER_BASE_URL,
+    CREATE: ApiEndpoints.USER_BASE_URL,
+    GET_ALL: ApiEndpoints.USER_BASE_URL,
+    SEARCH: `${ApiEndpoints.USER_BASE_URL}/search-users`,
+    BY_USERNAME: (username: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/by-username/${username}`,
+    BY_EMAIL: (email: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/by-email/${email}`,
+    UPDATE: `${ApiEndpoints.USER_BASE_URL}/update-user`,
+    ACTIVATE: (id: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/${id}/activate`,
+    DEACTIVATE: (id: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/${id}/deactivate`,
+    DELETE: (id: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/${id}`,
   };
 
   // 👑 ROLE ENDPOINTS
   static readonly ROLES = {
-    BASE: `${this.BASE_URL}/roles`,
-    GET_ALL: `${this.BASE_URL}/roles`,
+    BASE: ApiEndpoints.ROLE_BASE_URL,
+    GET_ALL: ApiEndpoints.ROLE_BASE_URL,
   };
 
   // 🗂️ CATEGORY ENDPOINTS
   static readonly CATEGORIES = {
-    BASE: `${this.BASE_URL}/categories`,
-    GET_ALL: `${this.BASE_URL}/categories`,
+    BASE: ApiEndpoints.CATEGORY_BASE_URL,
+    GET_ALL: ApiEndpoints.CATEGORY_BASE_URL,
   };
 }

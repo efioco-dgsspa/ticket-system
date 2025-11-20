@@ -21,6 +21,7 @@ import com.efioco.ticketsystem.dto.RoleDTO;
 import com.efioco.ticketsystem.dto.UserDTO;
 import com.efioco.ticketsystem.entity.RoleEntity;
 import com.efioco.ticketsystem.entity.UserEntity;
+import com.efioco.ticketsystem.exceptions.ResourceNotFoundException;
 import com.efioco.ticketsystem.exceptions.UserServiceException;
 import com.efioco.ticketsystem.mapper.UserMapper;
 import com.efioco.ticketsystem.repository.RoleRepository;
@@ -53,8 +54,8 @@ public class UserService implements UserServiceInterface {
     private UserMapper userMapper;
 	
 	@Override
-	public void createUserIfNotExists(String username, String email, String password, Set<RoleEntity> roles) 
-			throws UserServiceException {
+	public void createUserIfNotExists(String username, String email, String password, 
+			Set<RoleEntity> roles) {
 		if (!userRepository.existsByEmail(email)) {
             UserEntity u = new UserEntity();
             u.setUsername(username);
@@ -70,7 +71,7 @@ public class UserService implements UserServiceInterface {
 	}
 	
 	@Override
-    public UserResponse createUser(UserRequest userRequest) throws UserServiceException {
+    public UserResponse createUser(UserRequest userRequest) {
 		logger.info("### Inizio processo di creazione utente ###");
 		UserDTO userDTO = userRequest.getUser();
 		
@@ -84,7 +85,7 @@ public class UserService implements UserServiceInterface {
 	    if (userDTO.getRoles() != null) {
 	        for (RoleDTO roleDTO : userDTO.getRoles()) {
 	            RoleEntity roleEntity = roleRepository.findById(UUID.fromString(roleDTO.getId()))
-	                    .orElseThrow(() -> new UserServiceException("Ruolo non trovato."));
+	                    .orElseThrow(() -> new ResourceNotFoundException("Ruolo non trovato."));
 	            rolesToAdd.add(roleEntity);
 	        }
 	    }
@@ -102,14 +103,14 @@ public class UserService implements UserServiceInterface {
     }
 	
 	@Override
-	public UserResponse updateUser(UserRequest userRequest) throws UserServiceException {
+	public UserResponse updateUser(UserRequest userRequest) {
 		logger.info("### Inizio processo di modifica dei parametri dell'utente ###");
 		UserDTO inputDTO = userRequest.getUser();
         UserResponse response = new UserResponse();
 
         // 1️⃣ Recupera l'utente dal DB
         UserEntity existingUser = userRepository.findById(UUID.fromString(inputDTO.getId()))
-                .orElseThrow(() -> new UserServiceException("Utente non trovato."));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
 
         boolean modified = false;
 
@@ -150,7 +151,7 @@ public class UserService implements UserServiceInterface {
             Set<RoleEntity> newRoles = new HashSet<>();
             for(RoleDTO roleDTO : inputDTO.getRoles()) {
                 RoleEntity role = roleRepository.findByName(roleDTO.getName())
-                        .orElseThrow(() -> new UserServiceException("Ruolo non trovato: " + roleDTO.getName()));
+                        .orElseThrow(() -> new ResourceNotFoundException("Ruolo non trovato: " + roleDTO.getName()));
                 newRoles.add(role);
             }
             
@@ -190,7 +191,7 @@ public class UserService implements UserServiceInterface {
 	public void deleteUser(String id) throws UserServiceException {
 		logger.info("### Inizio processo di eliminazione dell'utente dal sistema ###");
         UserEntity existingUser = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new UserServiceException("Utente non trovato."));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
         
         if (existingUser.getActive()) {
         	throw new UserServiceException("Impossibile eliminare un utente attivo");
@@ -219,11 +220,11 @@ public class UserService implements UserServiceInterface {
 	}
 	
 	@Override
-	public UserResponse updateUserActiveStatus(String id, boolean active) throws UserServiceException {
+	public UserResponse updateUserActiveStatus(String id, boolean active) {
 	    logger.info("### Inizio aggiornamento stato attivo utente con id: {} ###", id);
 
 	    UserEntity existingUser = userRepository.findById(UUID.fromString(id))
-	        .orElseThrow(() -> new UserServiceException("Utente non trovato con id: " + id));
+	        .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con id: " + id));
 
 	    if (existingUser.getActive() == active) {
 	        throw new UserServiceException("L'utente è già nello stato richiesto");
@@ -249,7 +250,7 @@ public class UserService implements UserServiceInterface {
 	}
 	
 	@Override
-    public UserResponse getUsersFiltered(UserRequest request) throws UserServiceException {
+    public UserResponse searchUsers(UserRequest request) {
 		UserResponse response = new UserResponse();
         try {
             Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
@@ -276,10 +277,10 @@ public class UserService implements UserServiceInterface {
     }
 	
 	@Override
-	public UserResponse getUserByUsername(String username) throws UserServiceException {
+	public UserResponse getUserByUsername(String username) {
 		logger.info("### Inizio processo di recupero di un utente a partire dal suo username ###");
 	    UserEntity user = userRepository.findByUsername(username)
-	            .orElseThrow(() -> new UserServiceException("Utente non trovato con username: " + username));
+	            .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con username: " + username));
 
 	    UserResponse response = new UserResponse();
 	    response.setUser(userMapper.toDTO(user));
@@ -289,10 +290,10 @@ public class UserService implements UserServiceInterface {
 	}
 	
 	@Override
-	public UserResponse getUserByEmail(String email) throws UserServiceException {
+	public UserResponse getUserByEmail(String email) {
 		logger.info("### Inizio processo di recupero di un utente a partire dalla sua email ###");
 	    UserEntity user = userRepository.findByEmail(email)
-	            .orElseThrow(() -> new UserServiceException("Utente non trovato con email: " + email));
+	            .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con email: " + email));
 
 	    UserResponse response = new UserResponse();
 	    response.setUser(userMapper.toDTO(user));
@@ -302,10 +303,10 @@ public class UserService implements UserServiceInterface {
 	}
 	
 	@Override
-	public UserResponse getUserByEmailOrUsername(AuthRequest request) throws UserServiceException {
+	public UserResponse getUserByEmailOrUsername(AuthRequest request) {
 		logger.info("### Inizio processo di recupero di un utente per il login ###");
 		UserEntity user = userRepository.findByEmailOrUsername(request.getIdentifier())
-	            .orElseThrow(() -> new UserServiceException("Utente non trovato con username/email: " + request.getIdentifier()));
+	            .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato con username/email: " + request.getIdentifier()));
 
 	    if (!user.getActive()) {
 	        throw new UserServiceException("Utente disattivato. Contattare l’amministratore.");

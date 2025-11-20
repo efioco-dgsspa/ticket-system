@@ -69,7 +69,8 @@ export class CreateUserComponent implements OnInit {
         username: this.userForm.value.username,
         email: this.userForm.value.email,
         password: this.userForm.value.password,
-        roles: [role] // inserisco in array perché backend si aspetta Role[]
+        roles: [role], // inserisco in array perché backend si aspetta Role[]
+        active: false
       }
     };
 

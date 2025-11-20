@@ -1,13 +1,13 @@
 package com.efioco.ticketsystem.exceptions;
 
-public class UserServiceException extends RuntimeException {
-
+public class ResourceNotFoundException extends RuntimeException {
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public UserServiceException(String message) {
+	
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }

@@ -34,12 +34,12 @@ public class AuthService implements AuthServiceInterface, UserDetailsService {
 	}
 	
 	@Override
-	public UserDetails getUserDetails(UserDTO user) throws UserServiceException {
+	public UserDetails getUserDetails(UserDTO user) {
 		return userDetailsBuilder(userService.getUserByEmail(user.getEmail()));
 	}
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         try {
             UserResponse userResponse = userService.getUserByEmail(email);
             return userDetailsBuilder(userResponse);

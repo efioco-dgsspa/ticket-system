@@ -58,7 +58,8 @@ public class SecurityConfig {
     };
 
     private static final String[] USER_POST_ENDPOINTS = {
-        "/api/users"
+        "/api/users",
+        "/api/users/search-users"
     };
 
     private static final String[] USER_PUT_ENDPOINTS = {
@@ -100,6 +101,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults()) // ✅ abilita CORS
             .authorizeHttpRequests(auth -> {
+//            	auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll(); 
+            	
                 configurePublicEndpoints(auth);
                 configureUserEndpoints(auth);
                 configureTicketEndpoints(auth);
