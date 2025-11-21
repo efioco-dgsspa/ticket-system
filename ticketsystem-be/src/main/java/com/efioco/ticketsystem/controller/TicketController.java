@@ -43,7 +43,7 @@ public class TicketController {
     	@ApiResponse(responseCode = "404", description = "Nessun ticket trovato"),
     	@ApiResponse(responseCode = "500", description = "Errore interno del server")
     })
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<?> getAllTickets() {
     	try {
     		TicketResponse response = ticketService.getAllTickets();
             if (CollectionUtils.isEmpty(response.getTickets())) {
