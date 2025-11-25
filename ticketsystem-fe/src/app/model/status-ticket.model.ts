@@ -1,4 +1,4 @@
-export interface Category {
+export interface Status {
   id: string;
   code: string;
   description: string;

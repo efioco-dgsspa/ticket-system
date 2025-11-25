@@ -29,7 +29,7 @@ public class TicketMessageMapper {
 
 		TicketMessageDTO dto = new TicketMessageDTO();
 		dto.setId(entity.getId().toString());
-		dto.setTicket(ticketMapper.toDTO(entity.getTicket()));
+		//dto.setTicket(ticketMapper.toDTO(entity.getTicket()));
 		dto.setAuthor(userMapper.toDTO(entity.getAuthor()));
 		dto.setDescription(entity.getDescription());
 		dto.setAttachments(ticketAttachmentMapper.toDTOList(entity.getAttachments()));
