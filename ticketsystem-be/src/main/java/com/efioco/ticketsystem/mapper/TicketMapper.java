@@ -16,6 +16,8 @@ import com.efioco.ticketsystem.entity.TicketEntity;
 public class TicketMapper {
 
 	@Autowired
+	private TicketUrgencyMapper ticketUrgencyMapper;
+	@Autowired
 	private TicketMessageMapper ticketMessageMapper;
 	@Autowired
 	private TicketStatusMapper ticketStatusMapper;
@@ -39,6 +41,7 @@ public class TicketMapper {
         dto.setUpdatedAt(entity.getUpdatedAt());
         dto.setRemoved(entity.getRemoved());
         dto.setMessages(ticketMessageMapper.toDTOList(entity.getMessages()));
+        dto.setUrgency(ticketUrgencyMapper.toDTO(entity.getUrgency()));
 
         return dto;
     }
@@ -57,6 +60,7 @@ public class TicketMapper {
         entity.setCreatedAt(dto.getCreatedAt());
         entity.setUpdatedAt(dto.getUpdatedAt());
         entity.setRemoved(dto.getRemoved());
+        entity.setUrgency(ticketUrgencyMapper.toEntity(dto.getUrgency()));
         
         return entity;
     }

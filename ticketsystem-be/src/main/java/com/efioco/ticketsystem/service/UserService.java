@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,9 +208,7 @@ public class UserService implements UserServiceInterface {
     public UserResponse getAllUsers() {
 		logger.info("### Inizio processo di recupero di tutti gli utenti presenti nel sistema ###");
 		UserResponse response = new UserResponse();
-		List<UserDTO> users = userRepository.findAll().stream()
-	            .map(userMapper::toDTO)
-	            .collect(Collectors.toList());
+		List<UserDTO> users = userMapper.toDTOList(userRepository.findAll());
 
 		response.setUsers(users);
 		
@@ -316,7 +313,8 @@ public class UserService implements UserServiceInterface {
 	        throw new UserServiceException("Password errata.");
 	    }
 	    
-	    System.out.println("ENCODER CLASS: " + passwordEncoder.getClass());
+//		🔹 LOG aggiuntivi per debug
+//	    System.out.println("ENCODER CLASS: " + passwordEncoder.getClass());
 
 	    UserResponse response = new UserResponse();
 	    response.setUser(userMapper.toDTO(user));

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.efioco.ticketsystem.dto.PermissionDTO;
 import com.efioco.ticketsystem.dto.UserDTO;
-import com.efioco.ticketsystem.exceptions.UserServiceException;
 import com.efioco.ticketsystem.response.UserResponse;
 
 @Service

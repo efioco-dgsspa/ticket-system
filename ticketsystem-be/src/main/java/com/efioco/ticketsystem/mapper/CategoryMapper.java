@@ -14,9 +14,6 @@ import com.efioco.ticketsystem.entity.CategoryEntity;
 @Component
 public class CategoryMapper {
 
-	/**
-	 * Mappa da Entity -> DTO
-	 */
 	public CategoryDTO toDTO(CategoryEntity category) {
 		if (category == null)
 			return null;
@@ -28,11 +25,7 @@ public class CategoryMapper {
 		dto.setDescription(category.getDescription());
 		return dto;
 	}
-
-	/**
-	 * Mappa da DTO -> Entity
-	 * già
-	 */
+	
 	public CategoryEntity toEntity(CategoryDTO dto) {
 		if (dto == null)
 			return null;
@@ -45,9 +38,6 @@ public class CategoryMapper {
 		return category;
 	}
 
-	/**
-	 * Mappa lista di Entity -> lista di DTO
-	 */
 	public List<CategoryDTO> toDTOList(List<CategoryEntity> categories) {
 		if (CollectionUtils.isEmpty(categories)) return null;
         return categories.stream()
@@ -55,9 +45,6 @@ public class CategoryMapper {
                 .collect(Collectors.toList());
 	}
 
-	/**
-	 * Mappa lista di DTO -> lista di Entity
-	 */
 	public List<CategoryEntity> toEntityList(List<CategoryDTO> dtos) {
 		if (CollectionUtils.isEmpty(dtos)) return null;
         return dtos.stream()

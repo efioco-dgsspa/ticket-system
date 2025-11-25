@@ -14,9 +14,6 @@ import com.efioco.ticketsystem.entity.TicketStatusEntity;
 @Component
 public class TicketStatusMapper {
 	
-	/**
-	 * Mappa da Entity -> DTO
-	 */
 	public TicketStatusDTO toDTO(TicketStatusEntity tcktStatus) {
 		if (tcktStatus == null)
 			return null;
@@ -29,10 +26,6 @@ public class TicketStatusMapper {
 		return dto;
 	}
 
-	/**
-	 * Mappa da DTO -> Entity
-	 * già
-	 */
 	public TicketStatusEntity toEntity(TicketStatusDTO dto) {
 		if (dto == null)
 			return null;
@@ -45,9 +38,6 @@ public class TicketStatusMapper {
 		return tcktStatus;
 	}
 
-	/**
-	 * Mappa lista di Entity -> lista di DTO
-	 */
 	public List<TicketStatusDTO> toDTOList(List<TicketStatusEntity> tcktStatuses) {
 		if (CollectionUtils.isEmpty(tcktStatuses)) return null;
         return tcktStatuses.stream()
@@ -55,9 +45,6 @@ public class TicketStatusMapper {
                 .collect(Collectors.toList());
 	}
 
-	/**
-	 * Mappa lista di DTO -> lista di Entity
-	 */
 	public List<TicketStatusEntity> toEntityList(List<TicketStatusDTO> dtos) {
 		if (CollectionUtils.isEmpty(dtos)) return null;
         return dtos.stream()

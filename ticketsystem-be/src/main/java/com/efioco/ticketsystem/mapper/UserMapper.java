@@ -18,9 +18,6 @@ public class UserMapper {
 	@Autowired
 	private RoleMapper roleMapper;
 	
-	/**
-	 * Mappa da Entity -> DTO
-	 */
 	public UserDTO toDTO(UserEntity user) {
 		if (user == null)
 			return null;
@@ -35,9 +32,6 @@ public class UserMapper {
 		return dto;
 	}
 
-	/**
-	 * Mappa da DTO -> Entity
-	 */
 	public UserEntity toEntity(UserDTO dto) {
 		if (dto == null)
 			return null;
@@ -52,9 +46,6 @@ public class UserMapper {
 		return user;
 	}
 
-	/**
-	 * Mappa lista di Entity -> lista di DTO
-	 */
 	public List<UserDTO> toDTOList(List<UserEntity> users) {
 		if (CollectionUtils.isEmpty(users)) return null;
         return users.stream()
@@ -62,9 +53,6 @@ public class UserMapper {
                 .collect(Collectors.toList());
 	}
 
-	/**
-	 * Mappa lista di DTO -> lista di Entity
-	 */
 	public List<UserEntity> toEntityList(List<UserDTO> dtos) {
 		if (CollectionUtils.isEmpty(dtos)) return null;
         return dtos.stream()

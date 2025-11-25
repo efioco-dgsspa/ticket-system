@@ -19,9 +19,6 @@ public class RoleMapper {
 	@Autowired
 	private PermissionMapper permissionMapper;
 	
-	/**
-	 * Mappa da Entity -> DTO
-	 */
 	public RoleDTO toDTO(RoleEntity role) {
 		if (role == null)
 			return null;
@@ -33,9 +30,6 @@ public class RoleMapper {
 		return dto;
 	}
 
-	/**
-	 * Mappa da DTO -> Entity già
-	 */
 	public RoleEntity toEntity(RoleDTO dto) {
 		if (dto == null)
 			return null;
@@ -47,9 +41,6 @@ public class RoleMapper {
 		return role;
 	}
 
-	/**
-	 * Mappa lista di Entity -> lista di DTO
-	 */
 	public List<RoleDTO> toDTOList(List<RoleEntity> entities) {
 		if (CollectionUtils.isEmpty(entities))
 			return null;
@@ -58,9 +49,6 @@ public class RoleMapper {
 				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Mappa lista di DTO -> lista di Entity
-	 */
 	public List<RoleEntity> toEntityList(List<RoleDTO> dtos) {
 		if (CollectionUtils.isEmpty(dtos))
 			return null;
@@ -69,19 +57,13 @@ public class RoleMapper {
 				.collect(Collectors.toList());
 	}
 	
-	/**
-	 * Mappa set di DTO -> set di Entity
-	 */
 	public Set<RoleEntity> toEntitySet(Set<RoleDTO> dtos) {
 	    if (CollectionUtils.isEmpty(dtos)) return null;
 	    return dtos.stream()
 	    		.map(this::toEntity)
 	    		.collect(Collectors.toSet());
 	}
-
-	/**
-	 * Mappa set di Entity -> set di DTO
-	 */
+	
 	public Set<RoleDTO> toDTOSet(Set<RoleEntity> entities) {
 	    if (CollectionUtils.isEmpty(entities)) return null;
 	    return entities.stream()

@@ -55,13 +55,17 @@ public class TicketEntity {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketMessageEntity> messages = new ArrayList<>();
     
+    @ManyToOne
+    @JoinColumn(name = "urgency_id", nullable = false)
+    private TicketUrgencyEntity urgency;
+    
     public TicketEntity() {
 		
 	}
 
 	public TicketEntity(UUID id, String customerId, String title, TicketStatusEntity status, CategoryEntity category,
 			UserEntity creator, UserEntity assignedTo, LocalDateTime createdAt, LocalDateTime updatedAt,
-			boolean removed, List<TicketMessageEntity> messages) {
+			boolean removed, List<TicketMessageEntity> messages, TicketUrgencyEntity urgency) {
 		super();
 		this.id = id;
 		this.customerId = customerId;
@@ -74,6 +78,7 @@ public class TicketEntity {
 		this.updatedAt = updatedAt;
 		this.removed = removed;
 		this.messages = messages;
+		this.urgency = urgency;
 	}
 
 	public UUID getId() {
@@ -162,6 +167,14 @@ public class TicketEntity {
 
 	public void setMessages(List<TicketMessageEntity> messages) {
 		this.messages = messages;
+	}
+
+	public TicketUrgencyEntity getUrgency() {
+		return urgency;
+	}
+
+	public void setUrgency(TicketUrgencyEntity urgency) {
+		this.urgency = urgency;
 	}
     
 }

@@ -54,6 +54,11 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		if (filter.getCategory() != null) {
 			predicati.add(cb.equal(root.get("category").get("id"), filter.getCategory()));
 		}
+		
+		// urgency
+		if (filter.getUrgency() != null) {
+		    predicati.add(cb.equal(root.get("urgency").get("id"), filter.getUrgency()));
+		}
 
 		// creator
 		if (filter.getCreator() != null) {
@@ -96,7 +101,8 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		if (StringUtils.isBlank(filter.getCustomerId()) && StringUtils.isBlank(filter.getTitle())
 				&& filter.getStatus() == null && filter.getCategory() == null && filter.getCreator() == null 
 				&& filter.getAssignedTo() == null && filter.getCreatedAt() == null && filter.getUpdatedAt() == null
-				&& CollectionUtils.isEmpty(filter.getMessages()) && filter.getRemoved() == null) {
+				&& CollectionUtils.isEmpty(filter.getMessages()) && filter.getRemoved() == null
+				&& filter.getUrgency() == null) {
 			
 			return true;
 		}

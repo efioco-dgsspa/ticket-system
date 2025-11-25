@@ -2,7 +2,6 @@ package com.efioco.ticketsystem.service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,7 @@ public class RoleService implements RoleServiceInterface{
     public RoleResponse getAllRoles() {
 		logger.info("### Inizio processo di recupero di tutti i ruoli presenti nel sistema ###");
 		RoleResponse response = new RoleResponse();
-		List<RoleDTO> roles = roleRepository.findAll().stream()
-	            .map(roleMapper::toDTO)
-	            .collect(Collectors.toList());
+		List<RoleDTO> roles = roleMapper.toDTOList(roleRepository.findAll());
 
 		response.setRoles(roles);
 		

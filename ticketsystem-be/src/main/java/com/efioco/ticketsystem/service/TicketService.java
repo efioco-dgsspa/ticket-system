@@ -1,7 +1,6 @@
 package com.efioco.ticketsystem.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +27,7 @@ public class TicketService implements TicketServiceInterface {
     public TicketResponse getAllTickets() {
 		logger.info("### Inizio processo di recupero di tutti i tickets presenti nel sistema ###");
 		TicketResponse response = new TicketResponse();
-		List<TicketDTO> tickets = ticketRepository.findAll().stream()
-	            .map(ticketMapper::toDTO)
-	            .collect(Collectors.toList());
+		List<TicketDTO> tickets = ticketMapper.toDTOList(ticketRepository.findAll());
 
 		response.setTickets(tickets);
 		

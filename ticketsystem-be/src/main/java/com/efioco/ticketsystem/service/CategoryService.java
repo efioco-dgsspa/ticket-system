@@ -1,7 +1,6 @@
 package com.efioco.ticketsystem.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +27,7 @@ public class CategoryService implements CategoryServiceInterface {
     public CategoryResponse getAllCategories() {
 		logger.info("### Inizio processo di recupero di tutte le categorie presenti nel sistema ###");
 		CategoryResponse response = new CategoryResponse();
-		List<CategoryDTO> categories = categoryRepository.findAll().stream()
-	            .map(categoryMapper::toDTO)
-	            .collect(Collectors.toList());
+		List<CategoryDTO> categories = categoryMapper.toDTOList(categoryRepository.findAll());
 
 		response.setCategories(categories);
 		

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.efioco.ticketsystem.response.RoleResponse;
-import com.efioco.ticketsystem.service.RoleService;
+import com.efioco.ticketsystem.response.TicketUrgencyResponse;
+import com.efioco.ticketsystem.service.TicketUrgencyService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,31 +18,30 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api/ticket-urgencies")
 @CrossOrigin(origins = "*")
-@Tag(name = "Role Controller", description = "Gestione CRUD dei ruoli")
-public class RoleController {
+@Tag(name = "Ticket Urgency Controller", description = "Gestione CRUD delle urgenze relative ai ticket")
+public class TicketUrgencyController {
 
-	private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
+	private static final Logger logger = LoggerFactory.getLogger(TicketUrgencyController.class);
 
 	@Autowired
-	private RoleService roleService;
+	private TicketUrgencyService ticketUrgencyService;
 	
 	@GetMapping
     @Operation(
-    	    summary = "Mostra tutti i ruoli presenti nel sistema",
-    	    description = "Recupera e restituisce la lista completa di tutti i ruoli presenti nel sistema."
+    	    summary = "Mostra tutti i gradi di priorità relativi i ticket presenti nel sistema",
+    	    description = "Recupera e restituisce la lista completa di tutti i gradi di priorità relativi i ticket presenti nel sistema."
     	)
     @ApiResponses({
-    	@ApiResponse(responseCode = "200", description = "Lista dei ruoli restituita correttamente"),
+    	@ApiResponse(responseCode = "200", description = "Lista dei gradi di priorità dei tickets restituita correttamente"),
     	@ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
         @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
     	@ApiResponse(responseCode = "404", description = "Nessun ruolo trovato"),
     	@ApiResponse(responseCode = "500", description = "Errore interno del server")
     })
-    public ResponseEntity<?> getAllRoles() {
-		RoleResponse response = roleService.getAllRoles();
-		return ResponseEntity.ok(response.getRoles());
+    public ResponseEntity<?> getAllTicketUrgencies() {
+		TicketUrgencyResponse response = ticketUrgencyService.getAllTicketUrgencies();
+    	return ResponseEntity.ok(response.getUrgencies());
     }
-	
 }

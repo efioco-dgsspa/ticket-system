@@ -3,8 +3,6 @@ package com.efioco.ticketsystem.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.efioco.ticketsystem.entity.TicketAttachmentEntity;
-
 public class TicketDTO {
 
 	private String id;
@@ -18,6 +16,7 @@ public class TicketDTO {
     private LocalDateTime updatedAt;
     private Boolean removed;
     private List<TicketMessageDTO> messages;
+    private TicketUrgencyDTO urgency;
     
     public TicketDTO() {
 
@@ -109,6 +108,14 @@ public class TicketDTO {
 
 	public void setMessages(List<TicketMessageDTO> messages) {
 		this.messages = messages;
+	}
+
+	public TicketUrgencyDTO getUrgency() {
+		return urgency;
+	}
+
+	public void setUrgency(TicketUrgencyDTO urgency) {
+		this.urgency = urgency;
 	}
 	
 }
