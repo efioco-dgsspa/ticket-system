@@ -23,6 +23,10 @@ export class ApiEndpoints {
     return `${this.BASE_URL}/categories`;
   }
 
+  private static get TICKET_BASE_URL(): string {
+    return `${this.BASE_URL}/tickets`;
+  }
+
   // 🔐 AUTH ENDPOINTS
   static readonly AUTH = {
     LOGIN: `${ApiEndpoints.AUTH_BASE_URL}/login`,
@@ -58,5 +62,11 @@ export class ApiEndpoints {
   static readonly CATEGORIES = {
     BASE: ApiEndpoints.CATEGORY_BASE_URL,
     GET_ALL: ApiEndpoints.CATEGORY_BASE_URL,
+  };
+
+  // 🗂️ TICKET ENDPOINTS
+  static readonly TICKETS = {
+    BASE: ApiEndpoints.TICKET_BASE_URL,
+    GET_ALL: ApiEndpoints.TICKET_BASE_URL,
   };
 }

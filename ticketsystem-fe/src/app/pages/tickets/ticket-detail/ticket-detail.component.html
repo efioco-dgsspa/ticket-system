@@ -1,0 +1,45 @@
+<div class="ticket-detail-container">
+  <h2>Dettaglio Ticket</h2>
+
+  <form [formGroup]="ticketForm">
+    <div class="form-group">
+      <label for="customerID">CustomerID</label>
+      <input id="customerID" type="text" formControlName="customer">
+    </div>
+
+    <div class="form-group">
+      <label for="creatorID">CreatorID</label>
+      <input id="creatorID" type="text" formControlName="creatorID">
+    </div>
+
+    <div class="form-group">
+      <label for="assignedToId">Assegnato A</label>
+      <input id="assignedToId" type="text" formControlName="assignedToId">
+    </div>
+
+    <div class="form-group">
+      <label for="descrizione">Descrizione</label>
+      <input id="descrizione" type="text" formControlName="descrizione">
+    </div>
+
+    <div class="form-group">
+      <label for="createdAt">Data/Ora Creazione</label>
+      <input id="createdAt" type="text" formControlName="createdAt">
+    </div>
+
+    <div class="form-group">
+      <label for="updatedAt">Data/Ora Ultimo Aggiornamento</label>
+      <input id="updatedAt" type="text" formControlName="updatedAt">
+    </div>
+
+    <div class="form-group">
+      <label for="ticketMessages">Messaggi presenti</label>
+      <input id="ticketMessages" type="text" formControlName="ticketMessages">
+    </div>
+
+  </form>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Caricamento...</div>
+</ng-template>
