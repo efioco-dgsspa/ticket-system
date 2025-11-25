@@ -5,11 +5,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.efioco.ticketsystem.dto.TicketUrgencyDTO;
 import com.efioco.ticketsystem.entity.TicketUrgencyEntity;
 
+@Component
 public class TicketUrgencyMapper {
 
 	public TicketUrgencyDTO toDTO(TicketUrgencyEntity urgency) {

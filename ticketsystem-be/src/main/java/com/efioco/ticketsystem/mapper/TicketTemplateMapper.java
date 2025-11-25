@@ -6,11 +6,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.efioco.ticketsystem.dto.TicketTemplateDTO;
 import com.efioco.ticketsystem.entity.TicketTemplateEntity;
 
+@Component
 public class TicketTemplateMapper {
 
 	@Autowired
