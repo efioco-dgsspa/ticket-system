@@ -29,6 +29,8 @@ public class TicketEntity {
 
     private String title;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private TicketStatusEntity status;
@@ -63,13 +65,14 @@ public class TicketEntity {
 		
 	}
 
-	public TicketEntity(UUID id, String customerId, String title, TicketStatusEntity status, CategoryEntity category,
+	public TicketEntity(UUID id, String customerId, String title, String description, TicketStatusEntity status, CategoryEntity category,
 			UserEntity creator, UserEntity assignedTo, LocalDateTime createdAt, LocalDateTime updatedAt,
 			boolean removed, List<TicketMessageEntity> messages, TicketUrgencyEntity urgency) {
 		super();
 		this.id = id;
 		this.customerId = customerId;
 		this.title = title;
+        this.description = description;
 		this.status = status;
 		this.category = category;
 		this.creator = creator;
@@ -104,6 +107,14 @@ public class TicketEntity {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 	public TicketStatusEntity getStatus() {
 		return status;
@@ -176,5 +187,6 @@ public class TicketEntity {
 	public void setUrgency(TicketUrgencyEntity urgency) {
 		this.urgency = urgency;
 	}
-    
+
+
 }

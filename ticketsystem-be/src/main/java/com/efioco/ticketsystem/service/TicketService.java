@@ -1,7 +1,24 @@
 package com.efioco.ticketsystem.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
+import com.efioco.ticketsystem.dto.RoleDTO;
+import com.efioco.ticketsystem.dto.UserDTO;
+import com.efioco.ticketsystem.entity.RoleEntity;
+import com.efioco.ticketsystem.entity.TicketEntity;
+import com.efioco.ticketsystem.entity.TicketStatusEntity;
+import com.efioco.ticketsystem.entity.UserEntity;
+import com.efioco.ticketsystem.exceptions.ResourceNotFoundException;
+import com.efioco.ticketsystem.exceptions.TicketServiceException;
+import com.efioco.ticketsystem.mapper.CategoryMapper;
+import com.efioco.ticketsystem.mapper.TicketUrgencyMapper;
+import com.efioco.ticketsystem.mapper.UserMapper;
+import com.efioco.ticketsystem.repository.TicketStatusRepository;
+import com.efioco.ticketsystem.repository.UserRepository;
+import com.efioco.ticketsystem.request.TicketRequest;
+import com.efioco.ticketsystem.response.UserResponse;
+import com.efioco.ticketsystem.utility.CustomerIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +28,7 @@ import com.efioco.ticketsystem.dto.TicketDTO;
 import com.efioco.ticketsystem.mapper.TicketMapper;
 import com.efioco.ticketsystem.repository.TicketRepository;
 import com.efioco.ticketsystem.response.TicketResponse;
+import org.springframework.util.Assert;
 
 @Service
 public class TicketService implements TicketServiceInterface {
@@ -22,8 +40,21 @@ public class TicketService implements TicketServiceInterface {
 	
 	@Autowired
 	private TicketMapper ticketMapper;
-	
-	@Override
+
+    @Autowired
+    private TicketStatusRepository ticketStatusRepository;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private TicketUrgencyMapper urgencyMapper;
+    
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @Override
     public TicketResponse getAllTickets() {
 		logger.info("### Inizio processo di recupero di tutti i tickets presenti nel sistema ###");
 		TicketResponse response = new TicketResponse();
@@ -34,4 +65,43 @@ public class TicketService implements TicketServiceInterface {
 		logger.info("### Recupero di tutti i tickets presenti nel sistema completato con successo ###");
 		return response;
 	}
+
+    @Override
+    public TicketResponse createTicket(TicketRequest ticketRequest) throws TicketServiceException {
+        logger.info("### Inizio processo di creazione ticket ###");
+        TicketDTO ticketDTO = ticketRequest.getTicket();
+
+        Assert.notNull(ticketDTO, "UserDTO non può essere null");
+        Assert.hasText(ticketDTO.getTitle(), "Titolo obbligatorio");
+        Assert.hasText(ticketDTO.getDescription(), "Descrizione obbligatoria");
+        Assert.notNull(ticketDTO.getUrgency(), "Almeno un ruolo è obbligatorio");
+        ticketDTO.setRemoved(false);
+
+        TicketResponse response = new TicketResponse();
+
+        TicketEntity ticketEntity = ticketMapper.toEntity(ticketDTO);
+        ticketEntity.setTitle(ticketDTO.getTitle());
+        ticketEntity.setDescription(ticketDTO.getDescription());
+
+        TicketStatusEntity ticketStatusEntity = ticketStatusRepository.findByCode("OPEN")
+                .orElseThrow(() -> new ResourceNotFoundException("Status non trovato."));
+        ticketEntity.setStatus(ticketStatusEntity);
+
+        UserEntity userEntity = userRepository.findById(UUID.fromString(ticketDTO.getCreatorId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato."));
+        ticketEntity.setCreator(userEntity);
+
+        ticketEntity.setCategory(categoryMapper.toEntity(ticketDTO.getCategory()));
+        ticketEntity.setUrgency(urgencyMapper.toEntity(ticketDTO.getUrgency()));
+        ticketEntity.setCustomerId(CustomerIdGenerator.generate(ticketDTO.getCategory()));
+        ticketEntity.setRemoved(false);
+        ticketEntity.setCreatedAt(LocalDateTime.now());
+
+        TicketEntity savedTicket = ticketRepository.save(ticketEntity);
+
+        response.setTicket(ticketMapper.toDTO(savedTicket));
+
+        logger.info("### Creazione ticket completata con successo ###");
+        return response;
+    }
 }

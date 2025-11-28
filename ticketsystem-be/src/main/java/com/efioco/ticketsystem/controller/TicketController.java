@@ -1,15 +1,14 @@
 package com.efioco.ticketsystem.controller;
 
+import com.efioco.ticketsystem.request.TicketRequest;
+import com.efioco.ticketsystem.request.UserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.efioco.ticketsystem.response.ErrorResponse;
 import com.efioco.ticketsystem.response.TicketResponse;
@@ -55,6 +54,22 @@ public class TicketController {
             logger.error("Errore interno durante il recupero dei tickets", e);
             return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Errore interno del server");
         }
+    }
+
+    @PostMapping
+    @Operation(
+            summary = "Crea un nuovo ticket",
+            description = "Crea un ticket a partire dai dati forniti nel body JSON e restituisce un JSON contenente il ticket appena creato.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "ticket creato correttamente"),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida"),
+            @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+            @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> createTicket(@RequestBody TicketRequest request) {
+        var createdTicket = ticketService.createTicket(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
     }
 	
 	private ResponseEntity<ErrorResponse> buildError(HttpStatus status, String message) {

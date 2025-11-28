@@ -7,6 +7,7 @@ public class TicketDTO {
 
 	private String id;
     private String customerId;
+    private String description;
     private String title;
     private TicketStatusDTO status;
     private CategoryDTO category;
@@ -17,6 +18,7 @@ public class TicketDTO {
     private Boolean removed;
     private List<TicketMessageDTO> messages;
     private TicketUrgencyDTO urgency;
+    private String creatorId;
     
     public TicketDTO() {
 
@@ -37,6 +39,14 @@ public class TicketDTO {
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 	public String getTitle() {
 		return title;
@@ -117,5 +127,13 @@ public class TicketDTO {
 	public void setUrgency(TicketUrgencyDTO urgency) {
 		this.urgency = urgency;
 	}
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
 	
 }
