@@ -45,7 +45,6 @@ export class ListTicketComponent implements OnInit{
     this.ticketService.getAllTickets().subscribe({
   next: (list) => {
     this.tickets = list;
-    console.log(this.tickets);
   },
   error: (error: HttpErrorResponse) => {
     let message = 'Errore sconosciuto';

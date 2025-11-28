@@ -1,0 +1,19 @@
+<div class="create-ticket-container">
+  <h2>Creazione Ticket</h2>
+  <div class="cards-grid">
+    <button
+      class="cat-card"
+      *ngFor="let c of categories"
+      (click)="onCategoryClick(c)"
+      aria-label="Apri {{ c.name }}">
+      <div class="card-icon">
+        <span class="material-icons">devices</span>
+      </div>
+
+      <div class="card-text">
+        <div class="title">{{ c.name }}</div>
+        <div class="subtitle" *ngIf="c.description">{{ c.description }}</div>
+      </div>
+    </button>
+  </div>
+</div>

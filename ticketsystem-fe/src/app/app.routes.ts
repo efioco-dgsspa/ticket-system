@@ -7,6 +7,8 @@ import { UserDetailComponent } from './pages/users/user-detail/user-detail.compo
 import { ListUserComponent } from './pages/users/list-user/list-user.component';
 import {ListTicketComponent} from './pages/tickets/list-ticket/list-ticket.component';
 import {TicketDetailComponent} from './pages/tickets/ticket-detail/ticket-detail.component';
+import {CreateTicketComponent} from './pages/tickets/create-ticket/create-ticket.component';
+import {CreateTicketFormComponent} from './pages/tickets/create-ticket-form/create-ticket-form.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -31,6 +33,8 @@ export const routes: Routes = [
   { path: 'create-user', component: CreateUserComponent },
   { path: 'tickets', component: ListTicketComponent },
   { path: 'tickets/:id', component: TicketDetailComponent },
+  { path: 'create-ticket', component: CreateTicketComponent },
+  { path: 'ticket-create/:categoryId', component: CreateTicketFormComponent},
 
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' },

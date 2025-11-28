@@ -52,19 +52,19 @@ export class UserService {
   // 🔄 Attiva utente
   toggleUserActive(id: string): Observable<UserResponse> {
     return this.http.patch<UserResponse>(
-      ApiEndpoints.USERS.ACTIVATE(id), 
+      ApiEndpoints.USERS.ACTIVATE(id),
       {}, // ← body vuoto o dati se necessari
       { responseType: 'json' } // ← opzionale);
-    ); 
+    );
   }
 
   // 🔄 Disattiva utente
   toggleUserDeactivate(id: string): Observable<UserResponse> {
     return this.http.patch<UserResponse>(
-      ApiEndpoints.USERS.DEACTIVATE(id), 
+      ApiEndpoints.USERS.DEACTIVATE(id),
       {}, // ← body vuoto o dati se necessari
       { responseType: 'json' } // ← opzionale);
-    ); 
+    );
   }
 
   // ❌ Elimina utente

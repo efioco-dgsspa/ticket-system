@@ -1,56 +1,62 @@
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th>CustomerID</th>
-    <th>Titolo</th>
-    <th>Stato</th>
-    <th>Categoria</th>
-    <th>Data/Ora Creazione</th>
-    <!-- <th>Data Ultima Modifica</th>
-    <th>Numero Messaggi</th> -->
-    <th>Azioni</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let t of paginatedTickets">
-    <td>{{ t.customerId }}</td>
-    <td>{{ t.title }}</td>
-    <td>{{ t.status?.name }}</td>
-    <td>{{ t.category?.name }}</td>
-    <td>{{ t.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-    <!-- <td>{{ t.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-    <td>{{ t.ticketMessages }}</td> -->
+<div class="list-ticket-container">
+  <div *ngIf="tickets && tickets.length; else noTickets">
+    <h2>Lista Ticket</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>CustomerID</th>
+        <th>Titolo</th>
+        <th>Stato</th>
+        <th>Categoria</th>
+        <th>Data/Ora Creazione</th>
+        <th>Azioni</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let t of paginatedTickets">
+        <td>{{ t.customerId }}</td>
+        <td>{{ t.title }}</td>
+        <td>{{ t.status?.name }}</td>
+        <td>{{ t.category?.name }}</td>
+        <td>{{ t.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
 
-    <!-- <td class="actions-cell center">
-      <button class="menu-btn" (click)="toggleMenu(t, $event)">☰</button>
-      <div class="dropdown" *ngIf="t.showMenu" (click)="$event.stopPropagation()">
-        <button *ngIf="can('VIEW')" (click)="viewTicket(t)">👁️ Visualizza</button>
-        <button *ngIf="can('EDIT')" (click)="editTicket(t)">✏️ Modifica</button>
-        <button *ngIf="can('DELETE')" (click)="deleteTicket(t)">🗑️ Elimina</button>
+        <!-- <td class="actions-cell center">
+          <button class="menu-btn" (click)="toggleMenu(t, $event)">☰</button>
+          <div class="dropdown" *ngIf="t.showMenu" (click)="$event.stopPropagation()">
+            <button *ngIf="can('VIEW')" (click)="viewTicket(t)">👁️ Visualizza</button>
+            <button *ngIf="can('EDIT')" (click)="editTicket(t)">✏️ Modifica</button>
+            <button *ngIf="can('DELETE')" (click)="deleteTicket(t)">🗑️ Elimina</button>
+          </div>
+        </td> -->
+        <td class="actions-cell center">
+          <button class="menu-btn" (click)="toggleMenu(t, $event)">☰</button>
+          <div class="dropdown" *ngIf="t.showMenu" (click)="$event.stopPropagation()">
+            <button *ngIf="can('VIEW')" (click)="viewTicket(t)">👁️ Visualizza</button>
+            <button>✏️ Modifica</button>
+            <button>🗑️ Elimina</button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+
+      <div class="pagination-controls">
+        <button class="btn btn-primary" (click)="prevPage()" [disabled]="page === 1">
+          ◀️ Precedente
+        </button>
+
+        <span>Pagina {{ page }} / {{ Math.ceil(tickets.length / pageSize) }}</span>
+
+        <button class="btn btn-primary"
+                (click)="nextPage()"
+                [disabled]="page * pageSize >= tickets.length">
+          Successiva ▶️
+        </button>
       </div>
-    </td> -->
-    <td class="actions-cell center">
-      <button class="menu-btn" (click)="toggleMenu(t, $event)">☰</button>
-      <div class="dropdown" *ngIf="t.showMenu" (click)="$event.stopPropagation()">
-        <button *ngIf="can('VIEW')" (click)="viewTicket(t)">👁️ Visualizza</button>
-        <button>✏️ Modifica</button>
-        <button>🗑️ Elimina</button>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-
-  <div class="pagination-controls">
-    <button class="btn btn-primary" (click)="prevPage()" [disabled]="page === 1">
-      ◀️ Precedente
-    </button>
-
-    <span>Pagina {{ page }} / {{ Math.ceil(tickets.length / pageSize) }}</span>
-
-    <button class="btn btn-primary"
-            (click)="nextPage()"
-            [disabled]="page * pageSize >= tickets.length">
-      Successiva ▶️
-    </button>
+    </table>
   </div>
-</table>
+  <ng-template #noTickets>
+    <div class="no-tickets-message">
+      ❌ Non ci sono ticket da visualizzare
+    </div>
+  </ng-template>
+</div>

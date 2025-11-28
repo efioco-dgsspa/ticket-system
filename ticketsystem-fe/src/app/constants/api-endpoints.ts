@@ -27,6 +27,10 @@ export class ApiEndpoints {
     return `${this.BASE_URL}/tickets`;
   }
 
+  private static get URGENCY_TICKET_BASE_URL(): string {
+    return `${this.BASE_URL}/ticket-urgencies`;
+  }
+
   // 🔐 AUTH ENDPOINTS
   static readonly AUTH = {
     LOGIN: `${ApiEndpoints.AUTH_BASE_URL}/login`,
@@ -62,11 +66,21 @@ export class ApiEndpoints {
   static readonly CATEGORIES = {
     BASE: ApiEndpoints.CATEGORY_BASE_URL,
     GET_ALL: ApiEndpoints.CATEGORY_BASE_URL,
+    SEARCH: `${ApiEndpoints.CATEGORY_BASE_URL}/search-categories`,
+    BY_ID: (id: string) =>
+      `${ApiEndpoints.CATEGORY_BASE_URL}/by-id/${id}`
   };
 
   // 🗂️ TICKET ENDPOINTS
   static readonly TICKETS = {
     BASE: ApiEndpoints.TICKET_BASE_URL,
     GET_ALL: ApiEndpoints.TICKET_BASE_URL,
+    CREATE: ApiEndpoints.TICKET_BASE_URL
+  };
+
+  // 🗂️ URGENCY TICKET ENDPOINTS
+  static readonly URGENCY_TICKET = {
+    BASE: ApiEndpoints.URGENCY_TICKET_BASE_URL,
+    GET_ALL: ApiEndpoints.URGENCY_TICKET_BASE_URL,
   };
 }

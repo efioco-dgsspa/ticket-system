@@ -1,0 +1,47 @@
+<div class="create-ticket-container">
+  <h2>Crea Nuovo Ticket</h2>
+
+   <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+
+     <div class="form-group">
+       <label for="categoria">Categoria</label>
+       <input id="categoria" type="text" formControlName="categoria" readonly>
+     </div>
+
+    <div class="form-group">
+      <label for="titolo">Breve Descrizione</label>
+      <input id="titolo" type="text" formControlName="titolo" placeholder="Inserisci breve descrizione">
+      <div class="error" *ngIf="ticketForm.get('titolo')?.touched && ticketForm.get('titolo')?.invalid">
+        Breve Descrizione obbligatoria
+      </div>
+    </div>
+
+     <div class="form-group">
+       <label for="descrizione">Descrizione dettagliata</label>
+       <input id="descrizione" type="text" formControlName="descrizione" placeholder="Inserisci descrizione dettagliata">
+       <div class="error" *ngIf="ticketForm.get('descrizione')?.touched && ticketForm.get('descrizione')?.invalid">
+         Descrizione obbligatoria
+       </div>
+     </div>
+
+     <div class="form-group">
+       <label for="creator">Aperto da</label>
+       <input id="creator" type="text" formControlName="creator" readonly>
+     </div>
+
+     <div class="form-group">
+       <label for="urgency">Urgenza</label>
+       <select id="urgency" formControlName="urgency">
+         <option value="" disabled>Seleziona Urgenza</option>
+         <option *ngFor="let u of urgencies" [value]="u.id">{{ u.description }}</option>
+       </select>
+       <div class="error" *ngIf="ticketForm.get('urgency')?.touched && ticketForm.get('urgency')?.invalid">
+         Seleziona Urgenza
+       </div>
+     </div>
+
+     <button type="button" (click)="goBack()">Indietro</button>
+     <button type="submit">Crea Ticket</button>
+
+   </form>
+</div>

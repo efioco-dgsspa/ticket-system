@@ -22,6 +22,7 @@ export class SidebarComponent implements OnInit {
     { label: 'Visualizza Utenti', route: '/users', roles: ['ADMIN', 'EDITOR', 'FIRETOR', 'KILLER'] },
     { label: 'Crea Utente', route: '/create-user', roles: ['ADMIN', 'CREATOR'] },
     { label: 'Visualizza Ticket', route: '/tickets', roles: ['ADMIN', 'EDITOR', 'FIRETOR', 'CREATOR', 'KILLER'] },
+    { label: 'Crea Ticket', route: '/create-ticket', roles: ['ADMIN', 'EDITOR', 'FIRETOR', 'CREATOR', 'KILLER'] },
     { label: 'Altro', route: '/', roles: ['ADMIN', 'EDITOR', 'FIRETOR', 'CREATOR', 'KILLER'] }
   ];
 
