@@ -46,22 +46,36 @@
       }
     }
 
-    /* ✅ Checkbox in stile "campo form" */
-    .checkbox-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
+    button {
+      width: 33%;
+      padding: 10px;
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-left: auto;
+      margin-right: auto;
 
-      label {
-        font-weight: bold;
-        margin: 0;
-      }
+      /* ✅ Checkbox in stile "campo form" */
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
 
-      input[type='checkbox'] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
+        label {
+          font-weight: bold;
+          margin: 0;
+        }
+
+        input[type='checkbox'] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
       }
     }
 
@@ -69,17 +83,6 @@
     .form-actions {
       display: flex;
       justify-content: flex-end;
-
-      button {
-        width: 33%;
-        padding: 10px;
-        background-color: #1976d2;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.2s;
 
         &:hover:not(:disabled) {
           background-color: #115293;
@@ -89,7 +92,6 @@
           background-color: #90caf9;
           cursor: not-allowed;
         }
-      }
     }
   }
 

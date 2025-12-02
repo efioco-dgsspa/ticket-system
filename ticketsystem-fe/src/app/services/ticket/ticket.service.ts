@@ -32,4 +32,9 @@ export class TicketService {
     );
   }
 
+  // 📋 Recupera il ticket dall'id
+  getTicketById(id: string): Observable<Ticket> {
+    return this.http.get<Ticket>(ApiEndpoints.TICKETS.BY_ID(id));
+  }
+
 }

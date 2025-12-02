@@ -75,7 +75,9 @@ export class ApiEndpoints {
   static readonly TICKETS = {
     BASE: ApiEndpoints.TICKET_BASE_URL,
     GET_ALL: ApiEndpoints.TICKET_BASE_URL,
-    CREATE: ApiEndpoints.TICKET_BASE_URL
+    CREATE: ApiEndpoints.TICKET_BASE_URL,
+    BY_ID: (id: string) =>
+      `${ApiEndpoints.TICKET_BASE_URL}/by-id/${id}`
   };
 
   // 🗂️ URGENCY TICKET ENDPOINTS

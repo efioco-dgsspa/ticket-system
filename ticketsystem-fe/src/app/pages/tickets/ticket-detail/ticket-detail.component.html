@@ -8,8 +8,18 @@
     </div>
 
     <div class="form-group">
-      <label for="creatorID">CreatorID</label>
-      <input id="creatorID" type="text" formControlName="creatorID">
+      <label for="status">Stato</label>
+      <input id="status" type="text" formControlName="status">
+    </div>
+
+    <div class="form-group">
+      <label for="category">Categoria</label>
+      <input id="category" type="text" formControlName="category">
+    </div>
+
+    <div class="form-group">
+      <label for="creator">Aperto da</label>
+      <input id="creator" type="text" formControlName="creator">
     </div>
 
     <div class="form-group">
@@ -18,18 +28,23 @@
     </div>
 
     <div class="form-group">
-      <label for="descrizione">Descrizione</label>
-      <input id="descrizione" type="text" formControlName="descrizione">
+      <label for="title">Titolo</label>
+      <input id="title" type="text" formControlName="title">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrizione</label>
+      <input id="description" type="text" formControlName="description">
     </div>
 
     <div class="form-group">
       <label for="createdAt">Data/Ora Creazione</label>
-      <input id="createdAt" type="text" formControlName="createdAt">
+      <input id="createdAt" type="text" [value]="ticketForm.value.createdAt | date:'dd/MM/yyyy HH:mm'" disabled>
     </div>
 
     <div class="form-group">
       <label for="updatedAt">Data/Ora Ultimo Aggiornamento</label>
-      <input id="updatedAt" type="text" formControlName="updatedAt">
+      <input id="updatedAt" type="text" [value]="ticketForm.value.updatedAt | date:'dd/MM/yyyy HH:mm'" disabled>
     </div>
 
     <div class="form-group">
@@ -37,7 +52,14 @@
       <input id="ticketMessages" type="text" formControlName="ticketMessages">
     </div>
 
+    <div class="form-group">
+      <label for="urgency">Urgenza</label>
+      <input id="urgency" type="text" formControlName="urgency">
+    </div>
+
+    <button type="button" (click)="goBack()">Indietro</button>
   </form>
+
 </div>
 
 <ng-template #loadingTpl>

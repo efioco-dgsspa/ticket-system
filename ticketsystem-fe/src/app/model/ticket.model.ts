@@ -11,6 +11,7 @@ export interface Ticket {
   status?: Status;
   category?: Category;
   creatorId?: string;
+  creator?: User;
   createdAt?: string;
   updatedAt?: string;
   removed?: boolean;
