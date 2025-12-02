@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.efioco.ticketsystem.dto.UserDTO;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,7 @@ public class TicketMapper {
         dto.setId(entity.getId().toString());
         dto.setCustomerId(entity.getCustomerId());
         dto.setTitle(entity.getTitle());
+        dto.setDescription(entity.getDescription());
         dto.setStatus(ticketStatusMapper.toDTO(entity.getStatus()));
         dto.setCategory(categoryMapper.toDTO(entity.getCategory()));
         dto.setCreator(userMapper.toDTO(entity.getCreator()));

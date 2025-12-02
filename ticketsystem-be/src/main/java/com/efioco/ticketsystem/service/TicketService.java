@@ -3,21 +3,14 @@ package com.efioco.ticketsystem.service;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.efioco.ticketsystem.dto.RoleDTO;
-import com.efioco.ticketsystem.dto.UserDTO;
-import com.efioco.ticketsystem.entity.RoleEntity;
-import com.efioco.ticketsystem.entity.TicketEntity;
-import com.efioco.ticketsystem.entity.TicketStatusEntity;
-import com.efioco.ticketsystem.entity.UserEntity;
+import com.efioco.ticketsystem.entity.*;
 import com.efioco.ticketsystem.exceptions.ResourceNotFoundException;
 import com.efioco.ticketsystem.exceptions.TicketServiceException;
 import com.efioco.ticketsystem.mapper.CategoryMapper;
 import com.efioco.ticketsystem.mapper.TicketUrgencyMapper;
-import com.efioco.ticketsystem.mapper.UserMapper;
 import com.efioco.ticketsystem.repository.TicketStatusRepository;
 import com.efioco.ticketsystem.repository.UserRepository;
 import com.efioco.ticketsystem.request.TicketRequest;
-import com.efioco.ticketsystem.response.UserResponse;
 import com.efioco.ticketsystem.utility.CustomerIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +95,19 @@ public class TicketService implements TicketServiceInterface {
         response.setTicket(ticketMapper.toDTO(savedTicket));
 
         logger.info("### Creazione ticket completata con successo ###");
+        return response;
+    }
+
+    @Override
+    public TicketResponse getTicketById(UUID id) throws TicketServiceException {
+        logger.info("### Inizio processo di recupero di un ticket a partire dal suo id ###");
+        TicketEntity ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket non trovato con id: " + id));
+
+        TicketResponse response = new TicketResponse();
+        response.setTicket(ticketMapper.toDTO(ticket));
+
+        logger.info("### Ticket recuperato con successo ###");
         return response;
     }
 }

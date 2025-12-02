@@ -1,7 +1,7 @@
 package com.efioco.ticketsystem.controller;
 
 import com.efioco.ticketsystem.request.TicketRequest;
-import com.efioco.ticketsystem.request.UserRequest;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -70,6 +72,33 @@ public class TicketController {
     public ResponseEntity<?> createTicket(@RequestBody TicketRequest request) {
         var createdTicket = ticketService.createTicket(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
+    }
+
+    @GetMapping("/by-id/{id}")
+    @Operation(
+            summary = "Recupera un singolo ticket per id",
+            description = "Restituisce i dettagli completi di un ticket a partire dal suo id, fornito come parametro nel path."
+    )
+    @Parameter(
+            name = "id",
+            description = "L'id del ticket da cercare",
+            required = true
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ticket trovato e restituito correttamente"),
+            @ApiResponse(responseCode = "400", description = "Richiesta non valida o formato errato"),
+            @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+            @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+            @ApiResponse(responseCode = "404", description = "Ticket non trovata"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> getTicketById(@PathVariable UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id non fornito");
+        }
+
+        TicketResponse response = ticketService.getTicketById(id);
+        return ResponseEntity.ok(response.getTicket());
     }
 	
 	private ResponseEntity<ErrorResponse> buildError(HttpStatus status, String message) {

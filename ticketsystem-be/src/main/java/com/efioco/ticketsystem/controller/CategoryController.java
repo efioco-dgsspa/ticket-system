@@ -50,7 +50,7 @@ public class CategoryController {
 
     @GetMapping("/by-id/{id}")
     @Operation(
-            summary = "Recupera un singolo utente per id",
+            summary = "Recupera una singola categoria per id",
             description = "Restituisce i dettagli completi di una categoria a partire dal suo id, fornito come parametro nel path."
     )
     @Parameter(
@@ -66,7 +66,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Categoria non trovata"),
             @ApiResponse(responseCode = "500", description = "Errore interno del server")
     })
-    public ResponseEntity<?> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<?> getCategoryById(@PathVariable UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("id non fornito");
         }
