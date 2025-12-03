@@ -41,6 +41,7 @@ public class TicketMessageEntity {
 
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
+    private String content;
 
     public TicketMessageEntity() {
     	
@@ -102,4 +103,11 @@ public class TicketMessageEntity {
 		this.updatedAt = updatedAt;
 	}
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

@@ -7,7 +7,9 @@ import com.efioco.ticketsystem.entity.*;
 import com.efioco.ticketsystem.exceptions.ResourceNotFoundException;
 import com.efioco.ticketsystem.exceptions.TicketServiceException;
 import com.efioco.ticketsystem.mapper.CategoryMapper;
+import com.efioco.ticketsystem.mapper.TicketMessageMapper;
 import com.efioco.ticketsystem.mapper.TicketUrgencyMapper;
+import com.efioco.ticketsystem.repository.TicketMessageRepository;
 import com.efioco.ticketsystem.repository.TicketStatusRepository;
 import com.efioco.ticketsystem.repository.UserRepository;
 import com.efioco.ticketsystem.request.TicketRequest;
@@ -45,6 +47,9 @@ public class TicketService implements TicketServiceInterface {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TicketMessageRepository ticketMessageRepository;
 
 
     @Override
@@ -90,7 +95,16 @@ public class TicketService implements TicketServiceInterface {
         ticketEntity.setRemoved(false);
         ticketEntity.setCreatedAt(LocalDateTime.now());
 
+        TicketMessageEntity msg = new TicketMessageEntity();
+        msg.setTicket(ticketEntity);
+        msg.setCreatedAt(LocalDateTime.now());
+        msg.setAuthor(userEntity);
+        msg.setDescription(ticketDTO.getFirstMessage());
+        msg.setContent("-");
+        ticketEntity.getMessages().add(msg);
+
         TicketEntity savedTicket = ticketRepository.save(ticketEntity);
+        ticketMessageRepository.save(msg);
 
         response.setTicket(ticketMapper.toDTO(savedTicket));
 

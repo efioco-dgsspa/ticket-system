@@ -1,6 +1,7 @@
 package com.efioco.ticketsystem.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,4 +36,17 @@ public class TicketTemplateService implements TicketTemplateServiceInterface {
 		logger.info("### Recupero di tutti i templates per i ticket presenti nel sistema completato con successo ###");
 		return response;
 	}
+
+    @Override
+    public TicketTemplateResponse getAllTicketTemplatesByCategory(UUID idCategory) {
+        logger.info("### Inizio processo di recupero di tutti i templates a partire dalla categoria ###");
+        TicketTemplateResponse response = new TicketTemplateResponse();
+        List<TicketTemplateDTO> templates = ticketTemplateMapper.toDTOList(
+                ticketTemplateRepository.findByCategoryId(idCategory));
+
+        response.setTicketTemplates(templates);
+
+        logger.info("### Recupero di tutti i templates a partire dalla categoria completato con successo ###");
+        return response;
+    }
 }

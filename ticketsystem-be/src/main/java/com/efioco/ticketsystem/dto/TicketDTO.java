@@ -19,7 +19,8 @@ public class TicketDTO {
     private List<TicketMessageDTO> messages;
     private TicketUrgencyDTO urgency;
     private String creatorId;
-    
+    private String firstMessage;
+
     public TicketDTO() {
 
 	}
@@ -135,5 +136,12 @@ public class TicketDTO {
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
     }
-	
+
+    public String getFirstMessage() {
+        return firstMessage;
+    }
+
+    public void setFirstMessage(String firstMessage) {
+        this.firstMessage = firstMessage;
+    }
 }
