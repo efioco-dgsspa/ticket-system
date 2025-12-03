@@ -10,6 +10,8 @@ import {TicketUrgencyService} from '../../../services/ticket-urgency/ticket-urge
 import Swal from 'sweetalert2';
 import {TicketRequest} from '../../../model/ticket.request.model';
 import {TicketService} from '../../../services/ticket/ticket.service';
+import {TicketTemplateService} from '../../../services/ticket-template/ticket-template.service';
+import {TicketTemplate} from '../../../model/ticket-template.model';
 
 @Component({
   selector: 'app-create-ticket-form',
@@ -28,6 +30,7 @@ export class CreateTicketFormComponent implements OnInit {
   categorySelected: Category | undefined;
   utenteInSessione: User | null = null;
   urgencies: any[] = [];
+  subcategories: TicketTemplate[] = [];
 
   constructor(private route: ActivatedRoute,
               private fb: FormBuilder,
@@ -35,7 +38,8 @@ export class CreateTicketFormComponent implements OnInit {
               private authService: AuthService,
               private ticketUrgencyService: TicketUrgencyService,
               private router: Router,
-              private ticketService: TicketService) {
+              private ticketService: TicketService,
+              private ticketTemplateService: TicketTemplateService) {
   }
 
   ngOnInit(): void {
@@ -47,6 +51,7 @@ export class CreateTicketFormComponent implements OnInit {
 
     if (this.categoryId) {
       this.loadCategory(this.categoryId);
+      this.loadSubcategories(this.categoryId);
     } else {
       console.error("categoryId è null!");
     }
@@ -58,7 +63,9 @@ export class CreateTicketFormComponent implements OnInit {
       titolo: ['', [Validators.required, Validators.minLength(3)]],
       descrizione: ['', [Validators.required, Validators.minLength(3)]],
       creator: ['', [Validators.required]],
-      urgency: [null, Validators.required]
+      urgency: [null, Validators.required],
+      sottocategorie: [null, [Validators.required]],
+      ticketMessages: ['', [Validators.required, Validators.minLength(3)]],
     });
   }
 
@@ -75,6 +82,17 @@ export class CreateTicketFormComponent implements OnInit {
       },
       error: (err) => {
         console.error('Errore caricamento categoria:', err);
+      }
+    });
+  }
+
+  private loadSubcategories(id: string): void {
+    this.ticketTemplateService.getTicketTemplateByIdCategory(id).subscribe({
+      next: (subcategories) => {
+        this.subcategories = subcategories;
+      },
+      error: (err) => {
+        console.error('Errore caricamento sottocategorie:', err);
       }
     });
   }
@@ -102,6 +120,19 @@ export class CreateTicketFormComponent implements OnInit {
     this.ticketForm.get('creator')?.disable();
   }
 
+  onSubcategoryChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const templateId = select.value;
+    console.log(templateId)
+
+    const template = this.subcategories.find(t => t.id === templateId);
+    if (template) {
+      this.ticketForm.patchValue({
+        ticketMessages: template.templateText
+      });
+    }
+  }
+
   onSubmit(): void {
     if (this.ticketForm.invalid) {
       this.ticketForm.markAllAsTouched();
@@ -114,7 +145,8 @@ export class CreateTicketFormComponent implements OnInit {
         description: this.ticketForm.value.descrizione,
         creatorId: this.utenteInSessione!.id,
         urgency: this.urgencies.find(u => u.id === this.ticketForm.value.urgency),
-        category: this.categorySelected
+        category: this.categorySelected,
+        firstMessage: this.ticketForm.value.ticketMessages
       }
     };
 
@@ -122,8 +154,14 @@ export class CreateTicketFormComponent implements OnInit {
     console.log('[UserService] 🔍 Refresh token presente?', !!this.authService.getRefreshToken());
 
     this.ticketService.createTicket(request).subscribe({
-      next: () => {
+      next: (createdTicket) => {
         Swal.fire('Successo!', 'Ticket creato correttamente', 'success');
+
+        // torno al dettaglio del ticket appena creato
+        this.router.navigate([`/tickets/${createdTicket.ticket?.id}`], {
+          queryParams: { mode: 'view' }
+        });
+
         this.ticketForm.reset();
       },
       error: (err) => {

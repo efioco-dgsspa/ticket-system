@@ -5,14 +5,16 @@ import {NotificationService} from '../../../services/notification.service';
 import {TicketService} from '../../../services/ticket/ticket.service';
 import {TicketWithMenu} from '../../../model/ticket-with-menu.model';
 import {Ticket} from '../../../model/ticket.model';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgFor, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-ticket-detail',
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    DatePipe
+    DatePipe,
+    NgFor,
+    NgIf
   ],
   templateUrl: './ticket-detail.component.html',
   styleUrl: './ticket-detail.component.scss',
@@ -65,7 +67,7 @@ export class TicketDetailComponent implements OnInit{
       createdAt: [{ value: ticket.createdAt, disabled: true }],
       updatedAt: [{ value: ticket.updatedAt, disabled: true }],
       assignedToId: [{ value: ticket.assignedToId, disabled: true }],
-      ticketMessages: [{ value: ticket.ticketMessages, disabled: true }],
+      //ticketMessages: [{ value: ticket.messages, disabled: true }],
       urgency: [{ value: ticket.urgency?.description, disabled: true }]
     });
   }
