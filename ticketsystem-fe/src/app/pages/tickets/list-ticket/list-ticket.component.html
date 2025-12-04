@@ -1,4 +1,59 @@
 <div class="list-ticket-container">
+  <h2>Ricerca Ticket</h2>
+
+  <form (ngSubmit)="applySearch()" class="search-form-horizontal">
+    <div class="form-group">
+      <label for="title">Titolo</label>
+      <input
+        id="title"
+        type="text"
+        [(ngModel)]="search.title"
+        name="title"
+        placeholder="Inserisci titolo"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="status">Stato</label>
+      <select id="status" [(ngModel)]="search.status[0]" name="stati">
+        <option value="" disabled selected>Seleziona Stato</option>
+        <option *ngFor="let s of stati" [value]="s.id">{{ s.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="category">Categoria</label>
+      <select id="category" [(ngModel)]="search.category[0]" name="category">
+        <option value="" disabled selected>Seleziona Categoria</option>
+        <option *ngFor="let c of categorie" [value]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="urgency">Urgenza</label>
+      <select id="urgency" [(ngModel)]="search.urgency[0]" name="urgency">
+        <option value="" disabled selected>Seleziona Urgenza</option>
+        <option *ngFor="let u of urgenze" [value]="u.id">{{ u.name }}</option>
+      </select>
+    </div>
+
+      <!-- DatePicker -->
+      <div class="form-group">
+        <label for="data">Data creazione</label>
+        <input
+          id="data"
+          type="date"
+          [(ngModel)]="search.createdAt"
+          name="createdAt"
+        />
+      </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="resetSearch()">❌ Reset</button>
+      <button type="submit">🔍 Cerca</button>
+    </div>
+  </form>
+
   <div *ngIf="tickets && tickets.length; else noTickets">
     <h2>Lista Ticket</h2>
     <table class="table table-striped">

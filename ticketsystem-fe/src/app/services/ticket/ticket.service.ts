@@ -37,4 +37,9 @@ export class TicketService {
     return this.http.get<Ticket>(ApiEndpoints.TICKETS.BY_ID(id));
   }
 
+  // 🔍 Recupera i ticket sulla base dei filtri
+  searchTicket(request: any) {
+    return this.http.post<Ticket[]>(ApiEndpoints.TICKETS.SEARCH, request);
+  }
+
 }

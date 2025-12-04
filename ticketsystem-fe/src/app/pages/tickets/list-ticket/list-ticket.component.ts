@@ -9,6 +9,9 @@ import {Ticket} from '../../../model/ticket.model';
 import {UserWithMenu} from '../../../model/user-with-menu.model';
 import {TicketWithMenu} from '../../../model/ticket-with-menu.model';
 import {AuthService} from '../../../services/auth/auth.service';
+import {TicketStatusService} from '../../../services/ticket-status/ticket-status.service';
+import {CategoryTicketService} from '../../../services/category/category-ticket.service';
+import {TicketUrgencyService} from '../../../services/ticket-urgency/ticket-urgency.service';
 
 @Component({
   selector: 'app-list-ticket',
@@ -22,40 +25,106 @@ import {AuthService} from '../../../services/auth/auth.service';
   templateUrl: './list-ticket.component.html',
   styleUrl: './list-ticket.component.scss',
 })
-export class ListTicketComponent implements OnInit{
+export class ListTicketComponent implements OnInit {
   tickets: TicketWithMenu[] = [];
   error: string | null = null;
   page: number = 1;
-  pageSize: number = 9; // quanti ticket per pagina
+  pageSize: number = 4; // quanti ticket per pagina
   userRoles: string[] = [];
+  stati: any[] = [];
+  categorie: any[] = [];
+  urgenze: any[] = [];
+
+  search = {
+    title: '',
+    status: [] as string[],
+    category: [] as string[],
+    createdAt: '',
+    urgency: [] as string[]
+  };
 
   constructor(
     private router: Router,
-    private ticketService : TicketService,
+    private ticketService: TicketService,
     private notificationService: NotificationService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private ticketStatusService: TicketStatusService,
+    private categoryTicketService: CategoryTicketService,
+    private ticketUrgencyService: TicketUrgencyService
+  ) {
+  }
 
-    ngOnInit(): void {
-      this.loadTickets();
-      this.userRoles = this.authService.getUserRoles() || [];
-    }
+  ngOnInit(): void {
+    this.loadTickets();
+    this.userRoles = this.authService.getUserRoles() || [];
+    this.loadStatuses();
+    this.loadCategories();
+    this.loadUrgencies();
+  }
 
   loadTickets(): void {
     this.ticketService.getAllTickets().subscribe({
-  next: (list) => {
-    this.tickets = list;
-  },
-  error: (error: HttpErrorResponse) => {
-    let message = 'Errore sconosciuto';
-    if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
-    else if (error.status === 403) message = 'Accesso negato';
-    else if (error.error?.customerMessage) message = error.error.customerMessage;
-    this.error = message;
-    this.notificationService.error(this.error);
+      next: (list) => {
+        this.tickets = list;
+      },
+      error: (error: HttpErrorResponse) => {
+        let message = 'Errore sconosciuto';
+        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
+        else if (error.status === 403) message = 'Accesso negato';
+        else if (error.error?.customerMessage) message = error.error.customerMessage;
+        this.error = message;
+        this.notificationService.error(this.error);
+      }
+    });
   }
-});
-}
+
+  loadStatuses(): void {
+    this.ticketStatusService.getAllStatus().subscribe({
+      next: (list) => {
+        this.stati = list;
+      },
+      error: (error: HttpErrorResponse) => {
+        let message = 'Errore sconosciuto';
+        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
+        else if (error.status === 403) message = 'Accesso negato';
+        else if (error.error?.customerMessage) message = error.error.customerMessage;
+        this.error = message;
+        this.notificationService.error(this.error);
+      }
+    });
+  }
+
+  loadCategories(): void {
+    this.categoryTicketService.getAllCategoryTickets().subscribe({
+      next: (list) => {
+        this.categorie = list;
+      },
+      error: (error: HttpErrorResponse) => {
+        let message = 'Errore sconosciuto';
+        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
+        else if (error.status === 403) message = 'Accesso negato';
+        else if (error.error?.customerMessage) message = error.error.customerMessage;
+        this.error = message;
+        this.notificationService.error(this.error);
+      }
+    });
+  }
+
+  loadUrgencies(): void {
+    this.ticketUrgencyService.getAllUrgencyTicket().subscribe({
+      next: (list) => {
+        this.urgenze = list;
+      },
+      error: (error: HttpErrorResponse) => {
+        let message = 'Errore sconosciuto';
+        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
+        else if (error.status === 403) message = 'Accesso negato';
+        else if (error.error?.customerMessage) message = error.error.customerMessage;
+        this.error = message;
+        this.notificationService.error(this.error);
+      }
+    });
+  }
 
   get paginatedTickets(): TicketWithMenu[] {
     const start = (this.page - 1) * this.pageSize;
@@ -86,8 +155,8 @@ export class ListTicketComponent implements OnInit{
 
   viewTicket(ticket: TicketWithMenu) {
     const targetUrl = ['/tickets', ticket.id];
-    console.log('Navigo verso:', this.router.createUrlTree(targetUrl, { queryParams: { mode: 'view' } }).toString());
-    this.router.navigate(targetUrl, { queryParams: { mode: 'view' } });
+    console.log('Navigo verso:', this.router.createUrlTree(targetUrl, {queryParams: {mode: 'view'}}).toString());
+    this.router.navigate(targetUrl, {queryParams: {mode: 'view'}});
   }
 
   can(action: 'VIEW' | 'EDIT' | 'DELETE' | 'TOGGLE'): boolean {
@@ -99,5 +168,39 @@ export class ListTicketComponent implements OnInit{
       KILLER: ['VIEW', 'DELETE']
     };
     return this.userRoles.some(role => rolePermissions[role]?.includes(action));
+  }
+
+  resetSearch(): void {
+    this.search = {title: '', status: [], category: [], createdAt: '', urgency: []};
+    this.loadTickets();
+  }
+
+  applySearch(): void {
+    const request = {
+      page: 0,
+      size: 20,
+      ticket: {
+        title: this.search.title || null,
+        status: this.search.status[0]
+          ? [{id: this.search.status[0]}]
+          : null,
+        category: this.search.category[0]
+          ? [{id: this.search.category[0]}]
+          : null,
+        urgency: this.search.urgency[0]
+          ? [{id: this.search.urgency[0]}]
+          : null,
+        createdAt: this.search.createdAt || null
+      }
+    };
+console.log(request)
+    this.ticketService.searchTicket(request).subscribe({
+      next: (list) => {
+        this.tickets = list;
+      },
+      error: () => {
+        this.notificationService.error('Errore durante la ricerca filtrata dei ticket.');
+      }
+    });
   }
 }

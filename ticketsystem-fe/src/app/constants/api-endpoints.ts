@@ -35,6 +35,10 @@ export class ApiEndpoints {
     return `${this.BASE_URL}/ticket-urgencies`;
   }
 
+  private static get STATUS_TICKET_BASE_URL(): string {
+    return `${this.BASE_URL}/statuses`;
+  }
+
   // 🔐 AUTH ENDPOINTS
   static readonly AUTH = {
     LOGIN: `${ApiEndpoints.AUTH_BASE_URL}/login`,
@@ -81,7 +85,8 @@ export class ApiEndpoints {
     GET_ALL: ApiEndpoints.TICKET_BASE_URL,
     CREATE: ApiEndpoints.TICKET_BASE_URL,
     BY_ID: (id: string) =>
-      `${ApiEndpoints.TICKET_BASE_URL}/by-id/${id}`
+      `${ApiEndpoints.TICKET_BASE_URL}/by-id/${id}`,
+    SEARCH: `${ApiEndpoints.TICKET_BASE_URL}/search-tickets`,
   };
 
   // 🗂️ URGENCY TICKET ENDPOINTS
@@ -96,5 +101,11 @@ export class ApiEndpoints {
     GET_ALL: ApiEndpoints.TICKET_TEMPLATE_BASE_URL,
     BY_ID_CATEGORY: (id: string) =>
       `${ApiEndpoints.TICKET_TEMPLATE_BASE_URL}/by-id-category/${id}`
+  };
+
+  // 🗂️ TICKET STATUS ENDPOINTS
+  static readonly STATUS_TICKET  = {
+    BASE: ApiEndpoints.STATUS_TICKET_BASE_URL,
+    GET_ALL: ApiEndpoints.STATUS_TICKET_BASE_URL
   };
 }
