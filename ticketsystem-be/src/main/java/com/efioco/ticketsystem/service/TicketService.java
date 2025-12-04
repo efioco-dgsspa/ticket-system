@@ -6,6 +6,7 @@ import java.util.*;
 import com.efioco.ticketsystem.entity.*;
 import com.efioco.ticketsystem.exceptions.ResourceNotFoundException;
 import com.efioco.ticketsystem.exceptions.TicketServiceException;
+import com.efioco.ticketsystem.exceptions.UserServiceException;
 import com.efioco.ticketsystem.mapper.CategoryMapper;
 import com.efioco.ticketsystem.mapper.TicketMessageMapper;
 import com.efioco.ticketsystem.mapper.TicketUrgencyMapper;
@@ -13,10 +14,14 @@ import com.efioco.ticketsystem.repository.TicketMessageRepository;
 import com.efioco.ticketsystem.repository.TicketStatusRepository;
 import com.efioco.ticketsystem.repository.UserRepository;
 import com.efioco.ticketsystem.request.TicketRequest;
+import com.efioco.ticketsystem.specification.TicketSpecification;
 import com.efioco.ticketsystem.utility.CustomerIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.efioco.ticketsystem.dto.TicketDTO;
@@ -24,6 +29,7 @@ import com.efioco.ticketsystem.mapper.TicketMapper;
 import com.efioco.ticketsystem.repository.TicketRepository;
 import com.efioco.ticketsystem.response.TicketResponse;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TicketService implements TicketServiceInterface {
@@ -122,6 +128,33 @@ public class TicketService implements TicketServiceInterface {
         response.setTicket(ticketMapper.toDTO(ticket));
 
         logger.info("### Ticket recuperato con successo ###");
+        return response;
+    }
+
+    @Override
+    public TicketResponse searchTickets(TicketRequest request) throws TicketServiceException {
+        TicketResponse response = new TicketResponse();
+        try {
+            Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+
+            Page<TicketEntity> page = ticketRepository.findAll(new TicketSpecification(request), pageable);
+            List<TicketEntity> entities = page.getContent();
+
+            if (CollectionUtils.isEmpty(entities)) {
+                response.setTotalPage(0);
+                response.setTotalRows(0l);
+                response.setTickets(null);
+
+                return response;
+            }
+
+            response.setTotalPage(page.getTotalPages());
+            response.setTotalRows(page.getTotalElements());
+
+            response.setTickets(ticketMapper.toDTOList(entities));
+        } catch (Exception e) {
+            throw new TicketServiceException("Errore durante il recupero dei ticket.");
+        }
         return response;
     }
 }

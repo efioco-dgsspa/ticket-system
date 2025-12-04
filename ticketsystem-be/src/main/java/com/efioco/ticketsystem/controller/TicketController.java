@@ -100,6 +100,23 @@ public class TicketController {
         TicketResponse response = ticketService.getTicketById(id);
         return ResponseEntity.ok(response.getTicket());
     }
+
+    @PostMapping("/search-tickets")
+    @Operation(
+            summary = "Restituisce i ticket in base al filtro",
+            description = "Recupera e restituisce la lista dei ticket in base a quanto valorizzato nel filtro."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista ticket restituita correttamente"),
+            @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+            @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+            @ApiResponse(responseCode = "404", description = "Nessun ticket trovato"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> searchTickets(@RequestBody TicketRequest request) {
+        TicketResponse response = ticketService.searchTickets(request);
+        return ResponseEntity.ok(response.getTickets());
+    }
 	
 	private ResponseEntity<ErrorResponse> buildError(HttpStatus status, String message) {
         ErrorResponse error = new ErrorResponse();

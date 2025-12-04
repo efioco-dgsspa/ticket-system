@@ -11,5 +11,6 @@ public interface TicketServiceInterface {
 	TicketResponse getAllTickets();
     TicketResponse createTicket(TicketRequest ticketRequest) throws TicketServiceException;
     TicketResponse getTicketById(UUID id) throws TicketServiceException;
+    TicketResponse searchTickets(TicketRequest request) throws TicketServiceException;
 
 }
