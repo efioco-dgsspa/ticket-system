@@ -1,5 +1,5 @@
 -- ==========================================
--- Flyway migration: V4__update_ticket_templates.sql
+-- Flyway migration: V3__update_ticket_templates.sql
 -- ==========================================
 
 -- HARDWARE
