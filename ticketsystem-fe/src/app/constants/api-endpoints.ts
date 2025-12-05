@@ -55,6 +55,8 @@ export class ApiEndpoints {
       `${ApiEndpoints.USER_BASE_URL}/by-username/${username}`,
     BY_EMAIL: (email: string) =>
       `${ApiEndpoints.USER_BASE_URL}/by-email/${email}`,
+    BY_ROLE_NAME: (role: string) =>
+      `${ApiEndpoints.USER_BASE_URL}/by-role/${role}`,
     UPDATE: `${ApiEndpoints.USER_BASE_URL}/update-user`,
     ACTIVATE: (id: string) =>
       `${ApiEndpoints.USER_BASE_URL}/${id}/activate`,

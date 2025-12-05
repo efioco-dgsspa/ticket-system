@@ -17,7 +17,7 @@ export interface Ticket {
   createdAt?: string;
   updatedAt?: string;
   removed?: boolean;
-  assignedToId?: string;
+  assignedTo?: User;
   messages?: TicketMessage[];
   urgency?: UrgencyTicket;
   sottocategorie?: TicketTemplate;

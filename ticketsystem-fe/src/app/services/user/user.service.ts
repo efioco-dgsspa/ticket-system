@@ -71,4 +71,10 @@ export class UserService {
   deleteUser(id: string): Observable<string> {
     return this.http.delete<string>(ApiEndpoints.USERS.DELETE(id));
   }
+
+  // 🔍 Cerca per ruolo
+  getUsersByRoleName(role: string): Observable<User[]> {
+    console.log(ApiEndpoints.USERS.BY_ROLE_NAME(role))
+    return this.http.get<User[]>(ApiEndpoints.USERS.BY_ROLE_NAME(role));
+  }
 }

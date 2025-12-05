@@ -66,7 +66,7 @@ export class TicketDetailComponent implements OnInit{
       creator: [{ value: ticket.creator?.username, disabled: true }],
       createdAt: [{ value: ticket.createdAt, disabled: true }],
       updatedAt: [{ value: ticket.updatedAt, disabled: true }],
-      assignedToId: [{ value: ticket.assignedToId, disabled: true }],
+      assignedToId: [{ value: ticket.assignedTo?.username, disabled: true }],
       //ticketMessages: [{ value: ticket.messages, disabled: true }],
       urgency: [{ value: ticket.urgency?.description, disabled: true }]
     });

@@ -12,6 +12,7 @@ import {AuthService} from '../../../services/auth/auth.service';
 import {TicketStatusService} from '../../../services/ticket-status/ticket-status.service';
 import {CategoryTicketService} from '../../../services/category/category-ticket.service';
 import {TicketUrgencyService} from '../../../services/ticket-urgency/ticket-urgency.service';
+import {UserService} from '../../../services/user/user.service';
 
 @Component({
   selector: 'app-list-ticket',
@@ -34,13 +35,16 @@ export class ListTicketComponent implements OnInit {
   stati: any[] = [];
   categorie: any[] = [];
   urgenze: any[] = [];
+  listUserOperator: any[] = [];
 
   search = {
+    customerId: '',
     title: '',
-    status: [] as string[],
-    category: [] as string[],
+    status: '',
+    assignedTo: '',
+    category: '',
     createdAt: '',
-    urgency: [] as string[]
+    urgency: ''
   };
 
   constructor(
@@ -50,9 +54,9 @@ export class ListTicketComponent implements OnInit {
     private authService: AuthService,
     private ticketStatusService: TicketStatusService,
     private categoryTicketService: CategoryTicketService,
-    private ticketUrgencyService: TicketUrgencyService
-  ) {
-  }
+    private ticketUrgencyService: TicketUrgencyService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.loadTickets();
@@ -60,6 +64,18 @@ export class ListTicketComponent implements OnInit {
     this.loadStatuses();
     this.loadCategories();
     this.loadUrgencies();
+    this.loadUsersByRole("OPERATOR");
+  }
+
+  private handleHttpError(error: HttpErrorResponse): void {
+    let message = 'Errore sconosciuto';
+
+    if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
+    else if (error.status === 403) message = 'Accesso negato';
+    else if (error.error?.customerMessage) message = error.error.customerMessage;
+
+    this.error = message;
+    this.notificationService.error(message);
   }
 
   loadTickets(): void {
@@ -67,14 +83,16 @@ export class ListTicketComponent implements OnInit {
       next: (list) => {
         this.tickets = list;
       },
-      error: (error: HttpErrorResponse) => {
-        let message = 'Errore sconosciuto';
-        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
-        else if (error.status === 403) message = 'Accesso negato';
-        else if (error.error?.customerMessage) message = error.error.customerMessage;
-        this.error = message;
-        this.notificationService.error(this.error);
-      }
+      error: error => this.handleHttpError(error)
+    });
+  }
+
+  loadUsersByRole(role: string): void {
+    this.userService.getUsersByRoleName(role).subscribe({
+      next: (list) => {
+        this.listUserOperator = list;
+      },
+      error: error => this.handleHttpError(error)
     });
   }
 
@@ -83,14 +101,7 @@ export class ListTicketComponent implements OnInit {
       next: (list) => {
         this.stati = list;
       },
-      error: (error: HttpErrorResponse) => {
-        let message = 'Errore sconosciuto';
-        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
-        else if (error.status === 403) message = 'Accesso negato';
-        else if (error.error?.customerMessage) message = error.error.customerMessage;
-        this.error = message;
-        this.notificationService.error(this.error);
-      }
+      error: error => this.handleHttpError(error)
     });
   }
 
@@ -99,14 +110,7 @@ export class ListTicketComponent implements OnInit {
       next: (list) => {
         this.categorie = list;
       },
-      error: (error: HttpErrorResponse) => {
-        let message = 'Errore sconosciuto';
-        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
-        else if (error.status === 403) message = 'Accesso negato';
-        else if (error.error?.customerMessage) message = error.error.customerMessage;
-        this.error = message;
-        this.notificationService.error(this.error);
-      }
+      error: error => this.handleHttpError(error)
     });
   }
 
@@ -115,14 +119,7 @@ export class ListTicketComponent implements OnInit {
       next: (list) => {
         this.urgenze = list;
       },
-      error: (error: HttpErrorResponse) => {
-        let message = 'Errore sconosciuto';
-        if (error.status === 401) message = 'Accesso non autorizzato. Effettua il login.';
-        else if (error.status === 403) message = 'Accesso negato';
-        else if (error.error?.customerMessage) message = error.error.customerMessage;
-        this.error = message;
-        this.notificationService.error(this.error);
-      }
+      error: error => this.handleHttpError(error)
     });
   }
 
@@ -171,7 +168,7 @@ export class ListTicketComponent implements OnInit {
   }
 
   resetSearch(): void {
-    this.search = {title: '', status: [], category: [], createdAt: '', urgency: []};
+    this.search = {customerId: '', title: '', status: '', assignedTo: '', category: '', createdAt: '', urgency: ''};
     this.loadTickets();
   }
 
@@ -180,20 +177,18 @@ export class ListTicketComponent implements OnInit {
       page: 0,
       size: 20,
       ticket: {
+        customerId: this.search.customerId || null,
         title: this.search.title || null,
-        status: this.search.status[0]
-          ? [{id: this.search.status[0]}]
-          : null,
-        category: this.search.category[0]
-          ? [{id: this.search.category[0]}]
-          : null,
-        urgency: this.search.urgency[0]
-          ? [{id: this.search.urgency[0]}]
-          : null,
-        createdAt: this.search.createdAt || null
+        status: this.search.status ? { id: this.search.status } : null,
+        assignedTo: this.search.assignedTo ? { id: this.search.assignedTo } : null,
+        category: this.search.category ? { id: this.search.category } : null,
+        urgency: this.search.urgency ? { id: this.search.urgency } : null,
+        createdAt: this.search.createdAt
+          ? this.search.createdAt + 'T00:00:00'
+          : null
       }
     };
-console.log(request)
+    console.log(request)
     this.ticketService.searchTicket(request).subscribe({
       next: (list) => {
         this.tickets = list;

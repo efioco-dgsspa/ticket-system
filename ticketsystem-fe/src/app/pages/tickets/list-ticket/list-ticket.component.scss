@@ -159,53 +159,67 @@
     padding: 4px 0;
     min-width: 150px;
     animation: dropdownAppear 0.25s ease-out;
+
+    button {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background-color: #f1f5f9;
+      }
+    }
   }
 
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-left: auto; /* spinge i bottoni a destra */
-      margin-top: 10px;
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+    //margin-right: auto;
+    margin-top: 10px;
 
-      button {
-        background: none;
-        border: none;
-        padding: 10px 15px;
-        text-align: left;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
 
-        &:first-child {
-          background-color: #f0f0f0;
-          color: #333;
+      &:first-child {
+        background-color: #f0f0f0;
+        color: #333;
 
-          &:hover {
-            background-color: #e0e0e0;
-          }
+        &:hover {
+          background-color: #e0e0e0;
         }
+      }
 
-        &:last-child {
-          background-color: #1976d2;
-          color: #fff;
+      &:last-child {
+        background-color: #1976d2;
+        color: #fff;
 
-          &:hover {
-            background-color: #115293;
-          }
+        &:hover {
+          background-color: #115293;
         }
       }
     }
+  }
 
-    /* ✨ Piccola animazione */
-    @keyframes dropdownAppear {
-      from {
-        opacity: 0;
-        transform: translateX(10px) translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-2px) translateY(0px);
-      }
+  /* ✨ Piccola animazione */
+  @keyframes dropdownAppear {
+    from {
+      opacity: 0;
+      transform: translateX(10px) translateY(15px);
     }
+    to {
+      opacity: 1;
+      transform: translateX(-2px) translateY(0px);
+    }
+  }
 }
