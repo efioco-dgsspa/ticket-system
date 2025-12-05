@@ -1,7 +1,10 @@
 package com.efioco.ticketsystem.specification;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,18 +49,18 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		}
 
 		// status
-		if (filter.getStatus() != null) {
-			predicati.add(cb.equal(root.get("status").get("id"), filter.getStatus()));
+		if (filter.getStatus() != null && filter.getStatus().getId() != null) {
+			predicati.add(cb.equal(root.get("status").get("id"), UUID.fromString(filter.getStatus().getId())));
 		}
 
 		// category
-		if (filter.getCategory() != null) {
-			predicati.add(cb.equal(root.get("category").get("id"), filter.getCategory()));
+		if (filter.getCategory() != null && filter.getCategory().getId() != null) {
+			predicati.add(cb.equal(root.get("category").get("id"), UUID.fromString(filter.getCategory().getId())));
 		}
 		
 		// urgency
-		if (filter.getUrgency() != null) {
-		    predicati.add(cb.equal(root.get("urgency").get("id"), filter.getUrgency()));
+		if (filter.getUrgency() != null && filter.getUrgency().getId() != null) {
+		    predicati.add(cb.equal(root.get("urgency").get("id"), UUID.fromString(filter.getUrgency().getId())));
 		}
 
 		// creator
@@ -66,14 +69,21 @@ public class TicketSpecification implements Specification<TicketEntity> {
 		}
 
 		// assignedTo
-		if (filter.getAssignedTo() != null) {
-			predicati.add(cb.equal(root.get("assignedTo").get("username"), filter.getAssignedTo().getUsername()));
+		if (filter.getAssignedTo() != null && filter.getAssignedTo().getId() != null) {
+			predicati.add(cb.equal(root.get("assignedTo").get("id"), UUID.fromString(filter.getAssignedTo().getId())));
 		}
 
 		// date range
 		if (filter.getCreatedAt() != null) {
-			predicati.add(cb.greaterThanOrEqualTo(root.get("createdAt"), filter.getCreatedAt()));
+			//predicati.add(cb.greaterThanOrEqualTo(root.get("createdAt"), filter.getCreatedAt()));
+            LocalDate date = filter.getCreatedAt().toLocalDate();
+
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endOfDay = date.atTime(23, 59, 59, 999999999);
+
+            predicati.add(cb.between(root.get("createdAt"), startOfDay, endOfDay));
 		}
+
 		if (filter.getUpdatedAt() != null) {
 			predicati.add(cb.lessThanOrEqualTo(root.get("createdAt"), filter.getUpdatedAt()));
 		}

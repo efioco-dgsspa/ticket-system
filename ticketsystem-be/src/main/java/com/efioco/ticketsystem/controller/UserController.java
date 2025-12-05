@@ -216,4 +216,21 @@ public class UserController {
     	return ResponseEntity.ok(response.getUser());
     }
 
+    @GetMapping("/by-role/{role}")
+    @Operation(
+            summary = "Mostra tutti gli utenti a partire dal ruolo inserito",
+            description = "Recupera e restituisce la lista completa di tutti gli utenti con il ruolo ricercato."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista utenti restituita correttamente"),
+            @ApiResponse(responseCode = "401", description = "Token mancante, scaduto o non valido"),
+            @ApiResponse(responseCode = "403", description = "Accesso negato - ruolo non autorizzato"),
+            @ApiResponse(responseCode = "404", description = "Nessun utente trovato"),
+            @ApiResponse(responseCode = "500", description = "Errore interno del server")
+    })
+    public ResponseEntity<?> getAllUsersByRole(@PathVariable String role) {
+        UserResponse response = userService.getUsersByRole(role.toUpperCase());
+        return ResponseEntity.ok(response.getUsers());
+    }
+
 }

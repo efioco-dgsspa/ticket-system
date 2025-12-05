@@ -268,12 +268,30 @@ public class UserService implements UserServiceInterface {
 
             response.setUsers(userMapper.toDTOList(entities));
         } catch (Exception e) {
+            logger.error("Errore durante il recupero degli utenti con la request: {}", request, e);
             throw new UserServiceException("Errore durante il recupero degli utenti.");
         }
         return response;
     }
-	
-	@Override
+
+    @Override
+    public UserResponse getUsersByRole(String role) throws UserServiceException {
+
+        logger.info("### Inizio processo di recupero di utenti a partire dal ruolo: {} ###" , role);
+        try {
+            UserResponse response = new UserResponse();
+            List<UserEntity> users = userRepository.findByRoles_Name(role);
+            response.setUsers(userMapper.toDTOList(users));
+
+            logger.info("### Utenti recuperati con successo ###");
+            return response;
+        } catch (Exception e) {
+            logger.error("Errore durante il recupero degli utenti per il ruolo: {}", role, e);
+            throw new UserServiceException("Errore durante il recupero degli utenti.");
+        }
+    }
+
+    @Override
 	public UserResponse getUserByUsername(String username) {
 		logger.info("### Inizio processo di recupero di un utente a partire dal suo username ###");
 	    UserEntity user = userRepository.findByUsername(username)

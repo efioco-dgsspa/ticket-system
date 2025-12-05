@@ -153,6 +153,7 @@ public class TicketService implements TicketServiceInterface {
 
             response.setTickets(ticketMapper.toDTOList(entities));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new TicketServiceException("Errore durante il recupero dei ticket.");
         }
         return response;

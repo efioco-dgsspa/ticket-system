@@ -1,5 +1,6 @@
 package com.efioco.ticketsystem.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,4 +23,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 	Optional<UserEntity> findByUsername(String username);
 	Optional<UserEntity> findByEmail(String email);
 	boolean existsByEmail(String email);
+    List<UserEntity> findByRoles_Name(String roleName);
+
 }

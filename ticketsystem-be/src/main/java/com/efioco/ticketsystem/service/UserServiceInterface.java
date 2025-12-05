@@ -20,5 +20,5 @@ public interface UserServiceInterface {
 	UserResponse getUserByEmailOrUsername(AuthRequest request) throws UserServiceException;
 	UserResponse updateUserActiveStatus(String id, boolean active) throws UserServiceException;
 	UserResponse searchUsers(UserRequest request) throws UserServiceException;
-	
+	UserResponse getUsersByRole(String role) throws UserServiceException;
 }
