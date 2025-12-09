@@ -35,6 +35,7 @@
       <label for="assignedTo">Assegnati A:</label>
       <select id="assignedTo" [(ngModel)]="search.assignedTo" name="assignedTo">
         <option value="" disabled selected>Seleziona Utente</option>
+        <option value="none">Non ancora assegnati</option>
         <option *ngFor="let u of listUserOperator" [value]="u.id">{{ u.username }}</option>
       </select>
     </div>
