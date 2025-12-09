@@ -68,10 +68,16 @@ public class TicketSpecification implements Specification<TicketEntity> {
 			predicati.add(cb.equal(root.get("creator").get("username"), filter.getCreator().getUsername()));
 		}
 
-		// assignedTo
-		if (filter.getAssignedTo() != null && filter.getAssignedTo().getId() != null) {
-			predicati.add(cb.equal(root.get("assignedTo").get("id"), UUID.fromString(filter.getAssignedTo().getId())));
-		}
+        // assignedTo
+        if (filter.getAssignedTo() != null && filter.getAssignedTo().getId() != null) {
+            if (filter.getAssignedTo().getId().equals("none")) {
+                // Ticket senza assegnazione
+                predicati.add(cb.isNull(root.get("assignedTo")));
+            } else {
+                // Ticket assegnati ad uno specifico utente
+                predicati.add(cb.equal(root.get("assignedTo").get("id"), UUID.fromString(filter.getAssignedTo().getId())));
+            }
+        }
 
 		// date range
 		if (filter.getCreatedAt() != null) {
